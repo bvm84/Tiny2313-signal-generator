@@ -44,6 +44,9 @@
 	В имеющемся решении ногодрыг обеспечивается доступом к порту, а частота и длительность не аппаратной сврекой регистров
 	а счетом импульсов в прерывании. Ресурсов жрет больше и менее точно. 
   
+	В будущем добавить работу от ком-порта через симафоры, когда задется значение частоты и периода через ком-порт и таймер
+	щелкает ножкой в атоматическом режиме (скорее всего таймер1, так как 0  не отключить, он пропихивает 
+	машину состояний)
  */ 
 
 #include <avr/io.h>
@@ -83,9 +86,8 @@
 #define uS100 1
 #define Duty_50 2
 #define Duty_90 3
-#define Ms1 62
+#define Ms1 40 //сорок срабатываний обработчика таймера даст 25*40=1000мкс=1мсек
 
-#define ST_CTC_HANDMADE 255-210 //45  tick at 3MHz with prescaler 64 gives 22.33us*45=1,0045ms
 //структуры протопотоков
 static struct pt Buttons_pt;
 static struct pt Switch_pt;
@@ -95,11 +97,11 @@ volatile static uint32_t st_timer0_millis;
 volatile static uint8_t Button0State=MANUAL,Button1State=uS100;
 volatile uint32_t microsecond_timer=0, duration_timer=0, period_timer=0, duration_timer_count=0, period_timer_count=0;  
 uint32_t st_millis(void);
+
 PT_THREAD(Sync(struct pt *pt))
 {
-	static uint16_t val2=0;
+	uint8_t val2=0;
 	PT_BEGIN(pt);
-	TIMSK &= ~_BV(TOIE0); //отрубаем таймер
 	PIN(OUT_PORT)&=~_BV(OUT_PIN); //устанавливаем 0 на выходе
 	while (val2<=5)
 	{
@@ -112,6 +114,8 @@ PT_THREAD(Sync(struct pt *pt))
 		PIN(OUT_PORT)|=_BV(OUT_PIN); //устанавливаем 1 на выходе
 		_delay_us(80); //держим 1 на пине 80 микросекунд
 		PIN(OUT_PORT)&=~_BV(OUT_PIN); //сбрасываем выход в 0
+		_delay_ms(500); //задержка перед следующим срабатыванием
+		val2=0;
 	}
 	PT_EXIT(pt);
 	PT_END(pt);
@@ -123,44 +127,61 @@ PT_THREAD(Switch(struct pt *pt))
 	PT_WAIT_UNTIL(pt,(st_millis()-switch_timer)>=10);//запуск протопотока каждые 10мсек
 	if (Button0State==MANUAL) 
 	{
-		TIMSK &= ~_BV(TOIE0);//отрубаем таймер
-		PT_SPAWN(pt, &Sync_pt, (int)Sync(&Sync_pt));//вызываем дочерний протопоток ручного или синхро запуска
-	}//запустить дочерний протопоток, который сканирует кнопку и выплевывает исмпульс
-	if (Button0State==Hz1 && Button1State==uS100) 
+		PT_SPAWN(pt, &Sync_pt, Sync(&Sync_pt));//вызываем дочерний протопоток ручного или синхро запуска
+		//Макс частота нажатия кнопки ~2Гц
+		PORTD|=_BV(PD2);//зажигаем оба светодиода
+		PORTD|=_BV(PD3);
+	}
+	if (Button0State==Hz1) 
 	{
-		duration_timer=5; period_timer=62500; TIMSK |=_BV(TOIE0); //запускаем таймер
+		if (Button1State==uS100)
+		{
+			duration_timer=5; period_timer=62500;
+		}
+		else if (Button1State==Duty_50)
+		{
+			duration_timer=31500; period_timer=62500;
+		}
+		else 
+		{
+			duration_timer=5; period_timer=625;
+		}
+		PORTD|=_BV(PD2);//диод 2 горит
+		PORTD&=~_BV(PD3);//диод 3 не горит
 	} 
-	if (Button0State==Hz1 && Button1State==Duty_50)
+	if (Button0State==Hz100)
 	{
-		duration_timer=31500; period_timer=62500;
+		if (Button1State==uS100)
+		{
+			duration_timer=5; period_timer=625;
+		}
+		else if (Button1State==Duty_50)
+		{
+			duration_timer=315; period_timer=625;
+		}
+		else 
+		{
+			duration_timer=562; period_timer=625;
+		}
+		PORTD&=~_BV(PD2);//диод 2 не горит
+		PORTD|=_BV(PD3);//диод 3  горит
 	}
-	if (Button0State==Hz1 && Button1State==Duty_90)
+		if (Button0State==Hz1000)
 	{
-		duration_timer=56250; period_timer=62500;
-	}
-	if (Button0State==Hz100 && Button1State==uS100)
-	{
-		duration_timer=5; period_timer=625;
-	}
-	if (Button0State==Hz100 && Button1State==Duty_50)
-	{
-		duration_timer=315; period_timer=625;
-	}
-	if (Button0State==Hz100 && Button1State==Duty_90)
-	{
-		duration_timer=562; period_timer=625;
-	}
-	if (Button0State==Hz1000 && Button1State==uS100)
-	{
-		duration_timer=5; period_timer=62;
-	}
-	if (Button0State==Hz1000 && Button1State==Duty_50)
-	{
-		duration_timer=31; period_timer=62;
-	}
-	if (Button0State==Hz1000 && Button1State==Duty_90)
-	{
-		duration_timer=56; period_timer=62;
+		if (Button1State==uS100)
+		{
+			duration_timer=5; period_timer=62;
+		}
+		else if (Button1State==Duty_50)
+		{
+			duration_timer=31; period_timer=62;
+		}
+		else
+		{
+			duration_timer=56; period_timer=62;
+		}
+		PORTD&=~_BV(PD2);//гасим оба  светодиода
+		PORTD&=~_BV(PD3);
 	}
 	switch_timer=st_millis();
 	PT_END(pt);
@@ -180,10 +201,14 @@ PT_THREAD(Buttons(struct pt *pt))
 	{
 		if (val0>900)
 		{
+			if (Button0State==MANUAL) Button0State=Hz1; //при долгом нажатии кн0, проиходит смена периода
+			else if (Button0State==Hz1) Button0State=Hz100;
+			else if (Button0State==Hz100) Button0State=Hz1000;
+			else if (Button0State==Hz1000) Button0State=MANUAL;
 			//ButtonState=BUTTON_LONG_ON; - это сейчас не нужно, вдруг пригодится обрабатывать долгие нажатия
-			PT_WAIT_UNTIL(pt,(st_millis()-but_timer)>=1000);
+			//PT_WAIT_UNTIL(pt,(st_millis()-but_timer)>=1000);
 		}
-		else if (val0>=5)
+/*		else if (val0>=5)
 		{
 			if (Button0State==MANUAL) Button0State=Hz1;
 			else if (Button0State==Hz1) Button0State=Hz100;
@@ -191,6 +216,7 @@ PT_THREAD(Buttons(struct pt *pt))
 			else if (Button0State==Hz1000) Button0State=MANUAL;
 			//button_change_state();
 		}
+*/
 		val0=0;
 	}
 	if (((PIN(BUTTON1_PORT)&(_BV(BUTTON1_PIN)))==0)&&(val1<=1000))
@@ -201,9 +227,13 @@ PT_THREAD(Buttons(struct pt *pt))
 	{
 		if (val1>900)
 		{
+			if (Button1State==uS100) Button1State=Duty_50; //долгое нажатие кн1 - смена длительности
+			else if (Button1State==Duty_50) Button1State=Duty_90;
+			else if (Button0State==Duty_90) Button0State=uS100;
 			//ButtonState=BUTTON_LONG_ON; - это сейчас не нужно, вдруг пригодится обрабатывать долгие нажатия
-			PT_WAIT_UNTIL(pt,(st_millis()-but_timer)>=1000);
+			//PT_WAIT_UNTIL(pt,(st_millis()-but_timer)>=1000);
 		}
+/*
 		else if (val1>=5)
 		{
 			if (Button1State==uS100) Button1State=Duty_50;
@@ -211,22 +241,26 @@ PT_THREAD(Buttons(struct pt *pt))
 			else if (Button0State==Duty_90) Button0State=uS100;
 			//button_change_state();
 		}
+*/
 		val1=0;
 	}
 	PT_END(pt);
 }
-ISR(TIMER0_OVF_vect)
+ISR(TIMER0_COMPA_vect)
 {
-	if (duration_timer_count<duration_timer) duration_timer_count++;
-	else (PIN(OUT_PORT)&=(~_BV(OUT_PIN))); //сбросить пин в 0
-	if (period_timer_count<period_timer) period_timer_count++;
-	else {
-		PIN(OUT_PORT)|=(_BV(OUT_PIN)); //установить пин 1
-		period_timer_count=0;
-		duration_timer_count=0;
+	if (Button0State!=MANUAL)
+	{
+		if (duration_timer_count<duration_timer) duration_timer_count++;
+		else (PIN(OUT_PORT)&=(~_BV(OUT_PIN))); //сбросить пин в 0
+		if (period_timer_count<period_timer) period_timer_count++;
+		else {
+			PIN(OUT_PORT)|=(_BV(OUT_PIN)); //установить пин 1
+			period_timer_count=0;
+			duration_timer_count=0;
+		}
 	}
 	microsecond_timer++;
-	if (microsecond_timer==Ms1) {
+	if (microsecond_timer>=Ms1) {
 		st_timer0_millis++;
 		microsecond_timer=0;
 	}
@@ -255,8 +289,11 @@ int main(void)
 	// Enable interrupt
 	//TIMSK |= _BV(TOIE0) | _BV(OCIE1A);
 	// Set default value
-	TCNT0 = ST_CTC_HANDMADE; //1ms tiks on 3mhz CPU clock
-	
+	TCCR0A=0b00000010;//CTC operation of timer
+	TCCR0A=0b00000001;//Timer count from clk with no prescaler
+	TCNT0 = 0; //обнуляем счетчик таймера
+	OCR0A = 100;//прерывание каждые 100тиков, то есть каждые 25мкс
+	TIMSK |= _BV(OCIE0A);//разрешаем прерывание по совпадению TCNT0 с OCR0A
 	/*//set timer 1 for PWM
 	TCCR1A=0b10000001; //переключение oc1A по событие на таймере, oc1b льключен, WGM10=1, 8 бит таймер
 	TCCR1B=0b00001001; //clocked from CLK=8MHZ WGM12=1
@@ -265,14 +302,11 @@ int main(void)
 	TCNT1=0;
 	TIMSK=0;
 	*/
-	TIMSK |= _BV(TOIE0) | _BV(OCIE1A);
 	
-
 	PT_INIT(&Buttons_pt);
 	PT_INIT(&Switch_pt);
 	//PT_INIT(&Sync_pt);
 
-	
 	wdt_reset(); //сбрасываем собаку на всякий пожарный
 	wdt_enable(WDTO_2S); //запускаем собаку с перидом 2с
 	
