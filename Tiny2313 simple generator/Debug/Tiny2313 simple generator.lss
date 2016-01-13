@@ -3,31 +3,31 @@ Tiny2313 simple generator.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000592  00000000  00000000  00000094  2**1
+  0 .text         0000050a  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000002  00800060  00000592  00000626  2**0
+  1 .data         00000002  00800060  0000050a  0000059e  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          0000002b  00800062  00800062  00000628  2**0
+  2 .bss          00000027  00800062  00800062  000005a0  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  00000628  2**0
+  3 .comment      00000030  00000000  00000000  000005a0  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000658  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000005d0  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000048  00000000  00000000  00000698  2**0
+  5 .debug_aranges 00000048  00000000  00000000  00000610  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000141  00000000  00000000  000006e0  2**0
+  6 .debug_info   0000012f  00000000  00000000  00000658  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000000c9  00000000  00000000  00000821  2**0
+  7 .debug_abbrev 000000c9  00000000  00000000  00000787  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000286  00000000  00000000  000008ea  2**0
+  8 .debug_line   00000264  00000000  00000000  00000850  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000000d0  00000000  00000000  00000b70  2**2
+  9 .debug_frame  000000d0  00000000  00000000  00000ab4  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    0000015f  00000000  00000000  00000c40  2**0
+ 10 .debug_str    0000015f  00000000  00000000  00000b84  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    0000003f  00000000  00000000  00000d9f  2**0
+ 11 .debug_loc    0000003f  00000000  00000000  00000ce3  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000038  00000000  00000000  00000dde  2**0
+ 12 .debug_ranges 00000038  00000000  00000000  00000d22  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -46,7 +46,7 @@ Disassembly of section .text:
   14:	21 c0       	rjmp	.+66     	; 0x58 <__bad_interrupt>
   16:	20 c0       	rjmp	.+64     	; 0x58 <__bad_interrupt>
   18:	1f c0       	rjmp	.+62     	; 0x58 <__bad_interrupt>
-  1a:	4b c0       	rjmp	.+150    	; 0xb2 <__vector_13>
+  1a:	3b c0       	rjmp	.+118    	; 0x92 <__vector_13>
   1c:	1d c0       	rjmp	.+58     	; 0x58 <__bad_interrupt>
   1e:	1c c0       	rjmp	.+56     	; 0x58 <__bad_interrupt>
   20:	1b c0       	rjmp	.+54     	; 0x58 <__bad_interrupt>
@@ -63,7 +63,7 @@ Disassembly of section .text:
   2e:	10 e0       	ldi	r17, 0x00	; 0
   30:	a0 e6       	ldi	r26, 0x60	; 96
   32:	b0 e0       	ldi	r27, 0x00	; 0
-  34:	e2 e9       	ldi	r30, 0x92	; 146
+  34:	ea e0       	ldi	r30, 0x0A	; 10
   36:	f5 e0       	ldi	r31, 0x05	; 5
   38:	02 c0       	rjmp	.+4      	; 0x3e <__SP_L__+0x1>
   3a:	05 90       	lpm	r0, Z+
@@ -82,11 +82,11 @@ Disassembly of section .text:
   4c:	1d 92       	st	X+, r1
 
 0000004e <.do_clear_bss_start>:
-  4e:	ad 38       	cpi	r26, 0x8D	; 141
+  4e:	a9 38       	cpi	r26, 0x89	; 137
   50:	b2 07       	cpc	r27, r18
   52:	e1 f7       	brne	.-8      	; 0x4c <.do_clear_bss_loop>
-  54:	72 d2       	rcall	.+1252   	; 0x53a <main>
-  56:	9b c2       	rjmp	.+1334   	; 0x58e <_exit>
+  54:	2d d2       	rcall	.+1114   	; 0x4b0 <main>
+  56:	57 c2       	rjmp	.+1198   	; 0x506 <_exit>
 
 00000058 <__bad_interrupt>:
   58:	d3 cf       	rjmp	.-90     	; 0x0 <__vectors>
@@ -99,810 +99,708 @@ uint32_t st_millis(void);
 PT_THREAD(Sync(struct pt *pt))
 {
   5a:	fc 01       	movw	r30, r24
-	uint8_t val2=0;
 	PT_BEGIN(pt);
   5c:	80 81       	ld	r24, Z
   5e:	91 81       	ldd	r25, Z+1	; 0x01
   60:	89 2b       	or	r24, r25
-  62:	19 f5       	brne	.+70     	; 0xaa <Sync+0x50>
-	PIN(OUT_PORT)&=~_BV(OUT_PIN); //устанавливаем 0 на выходе
-  64:	84 98       	cbi	0x10, 4	; 16
-volatile uint32_t microsecond_timer=0, duration_timer=0, period_timer=0, duration_timer_count=0, period_timer_count=0;  
-uint32_t st_millis(void);
-
-PT_THREAD(Sync(struct pt *pt))
-{
-	uint8_t val2=0;
-  66:	90 e0       	ldi	r25, 0x00	; 0
-	PT_BEGIN(pt);
-	PIN(OUT_PORT)&=~_BV(OUT_PIN); //устанавливаем 0 на выходе
-	while (val2<=5)
+  62:	99 f4       	brne	.+38     	; 0x8a <Sync+0x30>
+	//PT_SEM_SIGNAL(pt, &manual_pulse); //устанавливает 1 в manual_pulse, сигнализируя что кнопки больше не опрашивались в другом пропотоке
+	PORTD&=~_BV(OUT_PIN); //устанавливаем 0 на выходе
+  64:	94 98       	cbi	0x12, 4	; 18
+	if (((PIN(BUTTON1_PORT)&(_BV(BUTTON1_PIN)))==0))
+  66:	86 99       	sbic	0x10, 6	; 16
+  68:	0c c0       	rjmp	.+24     	; 0x82 <Sync+0x28>
 	{
-		if (((PIN(BUTTON1_PORT)&(_BV(BUTTON1_PIN)))==0)) val2++;
-  68:	86 99       	sbic	0x10, 6	; 16
-  6a:	19 c0       	rjmp	.+50     	; 0x9e <Sync+0x44>
-  6c:	9f 5f       	subi	r25, 0xFF	; 255
+		PORTD|=_BV(OUT_PIN); //устанавливаем 1 на выходе
+  6a:	94 9a       	sbi	0x12, 4	; 18
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  6e:	af e0       	ldi	r26, 0x0F	; 15
-  70:	b7 e2       	ldi	r27, 0x27	; 39
-  72:	11 97       	sbiw	r26, 0x01	; 1
-  74:	f1 f7       	brne	.-4      	; 0x72 <Sync+0x18>
-  76:	00 c0       	rjmp	.+0      	; 0x78 <Sync+0x1e>
-  78:	00 00       	nop
-PT_THREAD(Sync(struct pt *pt))
-{
-	uint8_t val2=0;
-	PT_BEGIN(pt);
-	PIN(OUT_PORT)&=~_BV(OUT_PIN); //устанавливаем 0 на выходе
-	while (val2<=5)
-  7a:	96 30       	cpi	r25, 0x06	; 6
-  7c:	a9 f7       	brne	.-22     	; 0x68 <Sync+0xe>
-		else break;
-		_delay_ms(10);
-	}
-	if (val2>4)
-	{
-		PIN(OUT_PORT)|=_BV(OUT_PIN); //устанавливаем 1 на выходе
-  7e:	84 9a       	sbi	0x10, 4	; 16
+  6c:	8d e0       	ldi	r24, 0x0D	; 13
+  6e:	8a 95       	dec	r24
+  70:	f1 f7       	brne	.-4      	; 0x6e <Sync+0x14>
+  72:	00 00       	nop
+		_delay_us(5); //держим 1 на пине 80 микросекунд
+		PORTD&=~_BV(OUT_PIN); //сбрасываем выход в 0
+  74:	94 98       	cbi	0x12, 4	; 18
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  80:	ba e6       	ldi	r27, 0x6A	; 106
-  82:	ba 95       	dec	r27
-  84:	f1 f7       	brne	.-4      	; 0x82 <Sync+0x28>
-  86:	00 c0       	rjmp	.+0      	; 0x88 <Sync+0x2e>
-		_delay_us(80); //держим 1 на пине 80 микросекунд
-		PIN(OUT_PORT)&=~_BV(OUT_PIN); //сбрасываем выход в 0
-  88:	84 98       	cbi	0x10, 4	; 16
-	#else
-		//round up by default
-		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
-	#endif
-
-	__builtin_avr_delay_cycles(__ticks_dc);
-  8a:	2f e7       	ldi	r18, 0x7F	; 127
-  8c:	8a e1       	ldi	r24, 0x1A	; 26
-  8e:	96 e0       	ldi	r25, 0x06	; 6
-  90:	21 50       	subi	r18, 0x01	; 1
-  92:	80 40       	sbci	r24, 0x00	; 0
-  94:	90 40       	sbci	r25, 0x00	; 0
-  96:	e1 f7       	brne	.-8      	; 0x90 <Sync+0x36>
-  98:	00 c0       	rjmp	.+0      	; 0x9a <Sync+0x40>
-  9a:	00 00       	nop
-  9c:	02 c0       	rjmp	.+4      	; 0xa2 <Sync+0x48>
-	{
-		if (((PIN(BUTTON1_PORT)&(_BV(BUTTON1_PIN)))==0)) val2++;
-		else break;
-		_delay_ms(10);
-	}
-	if (val2>4)
-  9e:	95 30       	cpi	r25, 0x05	; 5
-  a0:	71 f3       	breq	.-36     	; 0x7e <Sync+0x24>
-		_delay_us(80); //держим 1 на пине 80 микросекунд
-		PIN(OUT_PORT)&=~_BV(OUT_PIN); //сбрасываем выход в 0
-		_delay_ms(500); //задержка перед следующим срабатыванием
-		val2=0;
+  76:	8f e1       	ldi	r24, 0x1F	; 31
+  78:	9e e4       	ldi	r25, 0x4E	; 78
+  7a:	01 97       	sbiw	r24, 0x01	; 1
+  7c:	f1 f7       	brne	.-4      	; 0x7a <Sync+0x20>
+  7e:	00 c0       	rjmp	.+0      	; 0x80 <Sync+0x26>
+  80:	00 00       	nop
+		_delay_ms(10); //задержка перед следующим срабатыванием
 	}
 	PT_EXIT(pt);
-  a2:	11 82       	std	Z+1, r1	; 0x01
-  a4:	10 82       	st	Z, r1
-  a6:	82 e0       	ldi	r24, 0x02	; 2
-  a8:	08 95       	ret
+  82:	11 82       	std	Z+1, r1	; 0x01
+  84:	10 82       	st	Z, r1
+  86:	82 e0       	ldi	r24, 0x02	; 2
+  88:	08 95       	ret
 	PT_END(pt);
-  aa:	11 82       	std	Z+1, r1	; 0x01
-  ac:	10 82       	st	Z, r1
-  ae:	83 e0       	ldi	r24, 0x03	; 3
+  8a:	11 82       	std	Z+1, r1	; 0x01
+  8c:	10 82       	st	Z, r1
+  8e:	83 e0       	ldi	r24, 0x03	; 3
 }
-  b0:	08 95       	ret
+  90:	08 95       	ret
 
-000000b2 <__vector_13>:
-		val1=0;
+00000092 <__vector_13>:
+		//PT_WAIT_UNTIL(pt,(st_millis()-but_timer)>=1000);
 	}
 	PT_END(pt);
 }
 ISR(TIMER0_COMPA_vect)
 {
-  b2:	1f 92       	push	r1
-  b4:	0f 92       	push	r0
-  b6:	0f b6       	in	r0, 0x3f	; 63
-  b8:	0f 92       	push	r0
-  ba:	11 24       	eor	r1, r1
-  bc:	4f 93       	push	r20
-  be:	5f 93       	push	r21
-  c0:	6f 93       	push	r22
-  c2:	7f 93       	push	r23
-  c4:	8f 93       	push	r24
-  c6:	9f 93       	push	r25
-  c8:	af 93       	push	r26
-  ca:	bf 93       	push	r27
+  92:	1f 92       	push	r1
+  94:	0f 92       	push	r0
+  96:	0f b6       	in	r0, 0x3f	; 63
+  98:	0f 92       	push	r0
+  9a:	11 24       	eor	r1, r1
+  9c:	4f 93       	push	r20
+  9e:	5f 93       	push	r21
+  a0:	6f 93       	push	r22
+  a2:	7f 93       	push	r23
+  a4:	8f 93       	push	r24
+  a6:	9f 93       	push	r25
+  a8:	af 93       	push	r26
+  aa:	bf 93       	push	r27
 	if (Button0State!=MANUAL)
-  cc:	80 91 82 00 	lds	r24, 0x0082
-  d0:	88 23       	and	r24, r24
-  d2:	09 f4       	brne	.+2      	; 0xd6 <__vector_13+0x24>
-  d4:	64 c0       	rjmp	.+200    	; 0x19e <__stack+0xbf>
+  ac:	80 91 7e 00 	lds	r24, 0x007E
+  b0:	88 23       	and	r24, r24
+  b2:	09 f4       	brne	.+2      	; 0xb6 <__vector_13+0x24>
+  b4:	64 c0       	rjmp	.+200    	; 0x17e <__stack+0x9f>
 	{
 		if (duration_timer_count<duration_timer) duration_timer_count++;
-  d6:	40 91 72 00 	lds	r20, 0x0072
-  da:	50 91 73 00 	lds	r21, 0x0073
-  de:	60 91 74 00 	lds	r22, 0x0074
-  e2:	70 91 75 00 	lds	r23, 0x0075
-  e6:	80 91 7a 00 	lds	r24, 0x007A
-  ea:	90 91 7b 00 	lds	r25, 0x007B
-  ee:	a0 91 7c 00 	lds	r26, 0x007C
-  f2:	b0 91 7d 00 	lds	r27, 0x007D
-  f6:	48 17       	cp	r20, r24
-  f8:	59 07       	cpc	r21, r25
-  fa:	6a 07       	cpc	r22, r26
-  fc:	7b 07       	cpc	r23, r27
-  fe:	a0 f4       	brcc	.+40     	; 0x128 <__stack+0x49>
- 100:	80 91 72 00 	lds	r24, 0x0072
- 104:	90 91 73 00 	lds	r25, 0x0073
- 108:	a0 91 74 00 	lds	r26, 0x0074
- 10c:	b0 91 75 00 	lds	r27, 0x0075
- 110:	01 96       	adiw	r24, 0x01	; 1
- 112:	a1 1d       	adc	r26, r1
- 114:	b1 1d       	adc	r27, r1
- 116:	80 93 72 00 	sts	0x0072, r24
- 11a:	90 93 73 00 	sts	0x0073, r25
- 11e:	a0 93 74 00 	sts	0x0074, r26
- 122:	b0 93 75 00 	sts	0x0075, r27
- 126:	01 c0       	rjmp	.+2      	; 0x12a <__stack+0x4b>
-		else (PIN(OUT_PORT)&=(~_BV(OUT_PIN))); //сбросить пин в 0
- 128:	84 98       	cbi	0x10, 4	; 16
+  b6:	40 91 6e 00 	lds	r20, 0x006E
+  ba:	50 91 6f 00 	lds	r21, 0x006F
+  be:	60 91 70 00 	lds	r22, 0x0070
+  c2:	70 91 71 00 	lds	r23, 0x0071
+  c6:	80 91 76 00 	lds	r24, 0x0076
+  ca:	90 91 77 00 	lds	r25, 0x0077
+  ce:	a0 91 78 00 	lds	r26, 0x0078
+  d2:	b0 91 79 00 	lds	r27, 0x0079
+  d6:	48 17       	cp	r20, r24
+  d8:	59 07       	cpc	r21, r25
+  da:	6a 07       	cpc	r22, r26
+  dc:	7b 07       	cpc	r23, r27
+  de:	a0 f4       	brcc	.+40     	; 0x108 <__stack+0x29>
+  e0:	80 91 6e 00 	lds	r24, 0x006E
+  e4:	90 91 6f 00 	lds	r25, 0x006F
+  e8:	a0 91 70 00 	lds	r26, 0x0070
+  ec:	b0 91 71 00 	lds	r27, 0x0071
+  f0:	01 96       	adiw	r24, 0x01	; 1
+  f2:	a1 1d       	adc	r26, r1
+  f4:	b1 1d       	adc	r27, r1
+  f6:	80 93 6e 00 	sts	0x006E, r24
+  fa:	90 93 6f 00 	sts	0x006F, r25
+  fe:	a0 93 70 00 	sts	0x0070, r26
+ 102:	b0 93 71 00 	sts	0x0071, r27
+ 106:	01 c0       	rjmp	.+2      	; 0x10a <__stack+0x2b>
+		else (PORTD&=(~_BV(OUT_PIN))); //сбросить пин в 0
+ 108:	94 98       	cbi	0x12, 4	; 18
 		if (period_timer_count<period_timer) period_timer_count++;
- 12a:	40 91 6e 00 	lds	r20, 0x006E
- 12e:	50 91 6f 00 	lds	r21, 0x006F
- 132:	60 91 70 00 	lds	r22, 0x0070
- 136:	70 91 71 00 	lds	r23, 0x0071
- 13a:	80 91 76 00 	lds	r24, 0x0076
- 13e:	90 91 77 00 	lds	r25, 0x0077
- 142:	a0 91 78 00 	lds	r26, 0x0078
- 146:	b0 91 79 00 	lds	r27, 0x0079
- 14a:	48 17       	cp	r20, r24
- 14c:	59 07       	cpc	r21, r25
- 14e:	6a 07       	cpc	r22, r26
- 150:	7b 07       	cpc	r23, r27
- 152:	a0 f4       	brcc	.+40     	; 0x17c <__stack+0x9d>
- 154:	80 91 6e 00 	lds	r24, 0x006E
- 158:	90 91 6f 00 	lds	r25, 0x006F
- 15c:	a0 91 70 00 	lds	r26, 0x0070
- 160:	b0 91 71 00 	lds	r27, 0x0071
- 164:	01 96       	adiw	r24, 0x01	; 1
- 166:	a1 1d       	adc	r26, r1
- 168:	b1 1d       	adc	r27, r1
- 16a:	80 93 6e 00 	sts	0x006E, r24
- 16e:	90 93 6f 00 	sts	0x006F, r25
- 172:	a0 93 70 00 	sts	0x0070, r26
- 176:	b0 93 71 00 	sts	0x0071, r27
- 17a:	11 c0       	rjmp	.+34     	; 0x19e <__stack+0xbf>
+ 10a:	40 91 6a 00 	lds	r20, 0x006A
+ 10e:	50 91 6b 00 	lds	r21, 0x006B
+ 112:	60 91 6c 00 	lds	r22, 0x006C
+ 116:	70 91 6d 00 	lds	r23, 0x006D
+ 11a:	80 91 72 00 	lds	r24, 0x0072
+ 11e:	90 91 73 00 	lds	r25, 0x0073
+ 122:	a0 91 74 00 	lds	r26, 0x0074
+ 126:	b0 91 75 00 	lds	r27, 0x0075
+ 12a:	48 17       	cp	r20, r24
+ 12c:	59 07       	cpc	r21, r25
+ 12e:	6a 07       	cpc	r22, r26
+ 130:	7b 07       	cpc	r23, r27
+ 132:	a0 f4       	brcc	.+40     	; 0x15c <__stack+0x7d>
+ 134:	80 91 6a 00 	lds	r24, 0x006A
+ 138:	90 91 6b 00 	lds	r25, 0x006B
+ 13c:	a0 91 6c 00 	lds	r26, 0x006C
+ 140:	b0 91 6d 00 	lds	r27, 0x006D
+ 144:	01 96       	adiw	r24, 0x01	; 1
+ 146:	a1 1d       	adc	r26, r1
+ 148:	b1 1d       	adc	r27, r1
+ 14a:	80 93 6a 00 	sts	0x006A, r24
+ 14e:	90 93 6b 00 	sts	0x006B, r25
+ 152:	a0 93 6c 00 	sts	0x006C, r26
+ 156:	b0 93 6d 00 	sts	0x006D, r27
+ 15a:	11 c0       	rjmp	.+34     	; 0x17e <__stack+0x9f>
 		else {
-			PIN(OUT_PORT)|=(_BV(OUT_PIN)); //установить пин 1
- 17c:	84 9a       	sbi	0x10, 4	; 16
+			PORTD|=(_BV(OUT_PIN)); //установить пин 1
+ 15c:	94 9a       	sbi	0x12, 4	; 18
 			period_timer_count=0;
- 17e:	10 92 6e 00 	sts	0x006E, r1
- 182:	10 92 6f 00 	sts	0x006F, r1
- 186:	10 92 70 00 	sts	0x0070, r1
- 18a:	10 92 71 00 	sts	0x0071, r1
+ 15e:	10 92 6a 00 	sts	0x006A, r1
+ 162:	10 92 6b 00 	sts	0x006B, r1
+ 166:	10 92 6c 00 	sts	0x006C, r1
+ 16a:	10 92 6d 00 	sts	0x006D, r1
 			duration_timer_count=0;
- 18e:	10 92 72 00 	sts	0x0072, r1
- 192:	10 92 73 00 	sts	0x0073, r1
- 196:	10 92 74 00 	sts	0x0074, r1
- 19a:	10 92 75 00 	sts	0x0075, r1
+ 16e:	10 92 6e 00 	sts	0x006E, r1
+ 172:	10 92 6f 00 	sts	0x006F, r1
+ 176:	10 92 70 00 	sts	0x0070, r1
+ 17a:	10 92 71 00 	sts	0x0071, r1
 		}
 	}
 	microsecond_timer++;
- 19e:	80 91 7e 00 	lds	r24, 0x007E
- 1a2:	90 91 7f 00 	lds	r25, 0x007F
- 1a6:	a0 91 80 00 	lds	r26, 0x0080
- 1aa:	b0 91 81 00 	lds	r27, 0x0081
- 1ae:	01 96       	adiw	r24, 0x01	; 1
- 1b0:	a1 1d       	adc	r26, r1
- 1b2:	b1 1d       	adc	r27, r1
- 1b4:	80 93 7e 00 	sts	0x007E, r24
- 1b8:	90 93 7f 00 	sts	0x007F, r25
- 1bc:	a0 93 80 00 	sts	0x0080, r26
- 1c0:	b0 93 81 00 	sts	0x0081, r27
+ 17e:	80 91 7a 00 	lds	r24, 0x007A
+ 182:	90 91 7b 00 	lds	r25, 0x007B
+ 186:	a0 91 7c 00 	lds	r26, 0x007C
+ 18a:	b0 91 7d 00 	lds	r27, 0x007D
+ 18e:	01 96       	adiw	r24, 0x01	; 1
+ 190:	a1 1d       	adc	r26, r1
+ 192:	b1 1d       	adc	r27, r1
+ 194:	80 93 7a 00 	sts	0x007A, r24
+ 198:	90 93 7b 00 	sts	0x007B, r25
+ 19c:	a0 93 7c 00 	sts	0x007C, r26
+ 1a0:	b0 93 7d 00 	sts	0x007D, r27
 	if (microsecond_timer>=Ms1) {
- 1c4:	80 91 7e 00 	lds	r24, 0x007E
- 1c8:	90 91 7f 00 	lds	r25, 0x007F
- 1cc:	a0 91 80 00 	lds	r26, 0x0080
- 1d0:	b0 91 81 00 	lds	r27, 0x0081
- 1d4:	88 97       	sbiw	r24, 0x28	; 40
- 1d6:	a1 05       	cpc	r26, r1
- 1d8:	b1 05       	cpc	r27, r1
- 1da:	d8 f0       	brcs	.+54     	; 0x212 <__stack+0x133>
+ 1a4:	80 91 7a 00 	lds	r24, 0x007A
+ 1a8:	90 91 7b 00 	lds	r25, 0x007B
+ 1ac:	a0 91 7c 00 	lds	r26, 0x007C
+ 1b0:	b0 91 7d 00 	lds	r27, 0x007D
+ 1b4:	88 97       	sbiw	r24, 0x28	; 40
+ 1b6:	a1 05       	cpc	r26, r1
+ 1b8:	b1 05       	cpc	r27, r1
+ 1ba:	d8 f0       	brcs	.+54     	; 0x1f2 <__stack+0x113>
 		st_timer0_millis++;
- 1dc:	80 91 83 00 	lds	r24, 0x0083
- 1e0:	90 91 84 00 	lds	r25, 0x0084
- 1e4:	a0 91 85 00 	lds	r26, 0x0085
- 1e8:	b0 91 86 00 	lds	r27, 0x0086
- 1ec:	01 96       	adiw	r24, 0x01	; 1
- 1ee:	a1 1d       	adc	r26, r1
- 1f0:	b1 1d       	adc	r27, r1
- 1f2:	80 93 83 00 	sts	0x0083, r24
- 1f6:	90 93 84 00 	sts	0x0084, r25
- 1fa:	a0 93 85 00 	sts	0x0085, r26
- 1fe:	b0 93 86 00 	sts	0x0086, r27
+ 1bc:	80 91 7f 00 	lds	r24, 0x007F
+ 1c0:	90 91 80 00 	lds	r25, 0x0080
+ 1c4:	a0 91 81 00 	lds	r26, 0x0081
+ 1c8:	b0 91 82 00 	lds	r27, 0x0082
+ 1cc:	01 96       	adiw	r24, 0x01	; 1
+ 1ce:	a1 1d       	adc	r26, r1
+ 1d0:	b1 1d       	adc	r27, r1
+ 1d2:	80 93 7f 00 	sts	0x007F, r24
+ 1d6:	90 93 80 00 	sts	0x0080, r25
+ 1da:	a0 93 81 00 	sts	0x0081, r26
+ 1de:	b0 93 82 00 	sts	0x0082, r27
 		microsecond_timer=0;
- 202:	10 92 7e 00 	sts	0x007E, r1
- 206:	10 92 7f 00 	sts	0x007F, r1
- 20a:	10 92 80 00 	sts	0x0080, r1
- 20e:	10 92 81 00 	sts	0x0081, r1
+ 1e2:	10 92 7a 00 	sts	0x007A, r1
+ 1e6:	10 92 7b 00 	sts	0x007B, r1
+ 1ea:	10 92 7c 00 	sts	0x007C, r1
+ 1ee:	10 92 7d 00 	sts	0x007D, r1
 	}
 }
- 212:	bf 91       	pop	r27
- 214:	af 91       	pop	r26
- 216:	9f 91       	pop	r25
- 218:	8f 91       	pop	r24
- 21a:	7f 91       	pop	r23
- 21c:	6f 91       	pop	r22
- 21e:	5f 91       	pop	r21
- 220:	4f 91       	pop	r20
- 222:	0f 90       	pop	r0
- 224:	0f be       	out	0x3f, r0	; 63
- 226:	0f 90       	pop	r0
- 228:	1f 90       	pop	r1
- 22a:	18 95       	reti
+ 1f2:	bf 91       	pop	r27
+ 1f4:	af 91       	pop	r26
+ 1f6:	9f 91       	pop	r25
+ 1f8:	8f 91       	pop	r24
+ 1fa:	7f 91       	pop	r23
+ 1fc:	6f 91       	pop	r22
+ 1fe:	5f 91       	pop	r21
+ 200:	4f 91       	pop	r20
+ 202:	0f 90       	pop	r0
+ 204:	0f be       	out	0x3f, r0	; 63
+ 206:	0f 90       	pop	r0
+ 208:	1f 90       	pop	r1
+ 20a:	18 95       	reti
 
-0000022c <st_millis>:
+0000020c <st_millis>:
 uint32_t st_millis(void)
 {
 	uint32_t m;
 
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
- 22c:	2f b7       	in	r18, 0x3f	; 63
+ 20c:	2f b7       	in	r18, 0x3f	; 63
     return 1;
 }
 
 static __inline__ uint8_t __iCliRetVal(void)
 {
     cli();
- 22e:	f8 94       	cli
+ 20e:	f8 94       	cli
 	{
 		m = st_timer0_millis;
- 230:	60 91 83 00 	lds	r22, 0x0083
- 234:	70 91 84 00 	lds	r23, 0x0084
- 238:	80 91 85 00 	lds	r24, 0x0085
- 23c:	90 91 86 00 	lds	r25, 0x0086
+ 210:	60 91 7f 00 	lds	r22, 0x007F
+ 214:	70 91 80 00 	lds	r23, 0x0080
+ 218:	80 91 81 00 	lds	r24, 0x0081
+ 21c:	90 91 82 00 	lds	r25, 0x0082
     (void)__s;
 }
 
 static __inline__ void __iRestore(const  uint8_t *__s)
 {
     SREG = *__s;
- 240:	2f bf       	out	0x3f, r18	; 63
+ 220:	2f bf       	out	0x3f, r18	; 63
 	}
 
 	return m;
 }
- 242:	08 95       	ret
+ 222:	08 95       	ret
 
-00000244 <Switch>:
+00000224 <Switch>:
 	}
 	PT_EXIT(pt);
 	PT_END(pt);
 }
 PT_THREAD(Switch(struct pt *pt))
 {
- 244:	0f 93       	push	r16
- 246:	1f 93       	push	r17
- 248:	cf 93       	push	r28
- 24a:	df 93       	push	r29
- 24c:	ec 01       	movw	r28, r24
+ 224:	0f 93       	push	r16
+ 226:	1f 93       	push	r17
+ 228:	cf 93       	push	r28
+ 22a:	df 93       	push	r29
+ 22c:	ec 01       	movw	r28, r24
 	static volatile uint32_t switch_timer=0; 
 	PT_BEGIN(pt);
- 24e:	88 81       	ld	r24, Y
- 250:	99 81       	ldd	r25, Y+1	; 0x01
- 252:	8f 37       	cpi	r24, 0x7F	; 127
- 254:	91 05       	cpc	r25, r1
- 256:	51 f0       	breq	.+20     	; 0x26c <Switch+0x28>
- 258:	82 38       	cpi	r24, 0x82	; 130
- 25a:	91 05       	cpc	r25, r1
- 25c:	41 f1       	breq	.+80     	; 0x2ae <Switch+0x6a>
- 25e:	89 2b       	or	r24, r25
- 260:	09 f0       	breq	.+2      	; 0x264 <Switch+0x20>
- 262:	d1 c0       	rjmp	.+418    	; 0x406 <Switch+0x1c2>
+ 22e:	88 81       	ld	r24, Y
+ 230:	99 81       	ldd	r25, Y+1	; 0x01
+ 232:	8c 37       	cpi	r24, 0x7C	; 124
+ 234:	91 05       	cpc	r25, r1
+ 236:	51 f0       	breq	.+20     	; 0x24c <Switch+0x28>
+ 238:	80 38       	cpi	r24, 0x80	; 128
+ 23a:	91 05       	cpc	r25, r1
+ 23c:	41 f1       	breq	.+80     	; 0x28e <Switch+0x6a>
+ 23e:	89 2b       	or	r24, r25
+ 240:	09 f0       	breq	.+2      	; 0x244 <Switch+0x20>
+ 242:	c5 c0       	rjmp	.+394    	; 0x3ce <Switch+0x1aa>
 	PT_WAIT_UNTIL(pt,(st_millis()-switch_timer)>=10);//запуск протопотока каждые 10мсек
- 264:	8f e7       	ldi	r24, 0x7F	; 127
- 266:	90 e0       	ldi	r25, 0x00	; 0
- 268:	99 83       	std	Y+1, r25	; 0x01
- 26a:	88 83       	st	Y, r24
- 26c:	df df       	rcall	.-66     	; 0x22c <st_millis>
- 26e:	00 91 6a 00 	lds	r16, 0x006A
- 272:	10 91 6b 00 	lds	r17, 0x006B
- 276:	20 91 6c 00 	lds	r18, 0x006C
- 27a:	30 91 6d 00 	lds	r19, 0x006D
- 27e:	dc 01       	movw	r26, r24
- 280:	cb 01       	movw	r24, r22
- 282:	80 1b       	sub	r24, r16
- 284:	91 0b       	sbc	r25, r17
- 286:	a2 0b       	sbc	r26, r18
- 288:	b3 0b       	sbc	r27, r19
- 28a:	0a 97       	sbiw	r24, 0x0a	; 10
- 28c:	a1 05       	cpc	r26, r1
- 28e:	b1 05       	cpc	r27, r1
- 290:	10 f4       	brcc	.+4      	; 0x296 <Switch+0x52>
- 292:	80 e0       	ldi	r24, 0x00	; 0
- 294:	bb c0       	rjmp	.+374    	; 0x40c <Switch+0x1c8>
+ 244:	8c e7       	ldi	r24, 0x7C	; 124
+ 246:	90 e0       	ldi	r25, 0x00	; 0
+ 248:	99 83       	std	Y+1, r25	; 0x01
+ 24a:	88 83       	st	Y, r24
+ 24c:	df df       	rcall	.-66     	; 0x20c <st_millis>
+ 24e:	00 91 66 00 	lds	r16, 0x0066
+ 252:	10 91 67 00 	lds	r17, 0x0067
+ 256:	20 91 68 00 	lds	r18, 0x0068
+ 25a:	30 91 69 00 	lds	r19, 0x0069
+ 25e:	dc 01       	movw	r26, r24
+ 260:	cb 01       	movw	r24, r22
+ 262:	80 1b       	sub	r24, r16
+ 264:	91 0b       	sbc	r25, r17
+ 266:	a2 0b       	sbc	r26, r18
+ 268:	b3 0b       	sbc	r27, r19
+ 26a:	0a 97       	sbiw	r24, 0x0a	; 10
+ 26c:	a1 05       	cpc	r26, r1
+ 26e:	b1 05       	cpc	r27, r1
+ 270:	10 f4       	brcc	.+4      	; 0x276 <Switch+0x52>
+ 272:	80 e0       	ldi	r24, 0x00	; 0
+ 274:	af c0       	rjmp	.+350    	; 0x3d4 <Switch+0x1b0>
 	if (Button0State==MANUAL) 
- 296:	80 91 82 00 	lds	r24, 0x0082
- 29a:	81 11       	cpse	r24, r1
- 29c:	0f c0       	rjmp	.+30     	; 0x2bc <Switch+0x78>
+ 276:	80 91 7e 00 	lds	r24, 0x007E
+ 27a:	81 11       	cpse	r24, r1
+ 27c:	0f c0       	rjmp	.+30     	; 0x29c <Switch+0x78>
 	{
+		
 		PT_SPAWN(pt, &Sync_pt, Sync(&Sync_pt));//вызываем дочерний протопоток ручного или синхро запуска
- 29e:	10 92 88 00 	sts	0x0088, r1
- 2a2:	10 92 87 00 	sts	0x0087, r1
- 2a6:	82 e8       	ldi	r24, 0x82	; 130
- 2a8:	90 e0       	ldi	r25, 0x00	; 0
- 2aa:	99 83       	std	Y+1, r25	; 0x01
- 2ac:	88 83       	st	Y, r24
- 2ae:	87 e8       	ldi	r24, 0x87	; 135
- 2b0:	90 e0       	ldi	r25, 0x00	; 0
- 2b2:	d3 de       	rcall	.-602    	; 0x5a <Sync>
- 2b4:	82 30       	cpi	r24, 0x02	; 2
- 2b6:	68 f3       	brcs	.-38     	; 0x292 <Switch+0x4e>
+ 27e:	10 92 84 00 	sts	0x0084, r1
+ 282:	10 92 83 00 	sts	0x0083, r1
+ 286:	80 e8       	ldi	r24, 0x80	; 128
+ 288:	90 e0       	ldi	r25, 0x00	; 0
+ 28a:	99 83       	std	Y+1, r25	; 0x01
+ 28c:	88 83       	st	Y, r24
+ 28e:	83 e8       	ldi	r24, 0x83	; 131
+ 290:	90 e0       	ldi	r25, 0x00	; 0
+ 292:	e3 de       	rcall	.-570    	; 0x5a <Sync>
+ 294:	82 30       	cpi	r24, 0x02	; 2
+ 296:	68 f3       	brcs	.-38     	; 0x272 <Switch+0x4e>
 		//Макс частота нажатия кнопки ~2Гц
 		PORTD|=_BV(PD2);//зажигаем оба светодиода
- 2b8:	92 9a       	sbi	0x12, 2	; 18
+ 298:	92 9a       	sbi	0x12, 2	; 18
 		PORTD|=_BV(PD3);
- 2ba:	93 9a       	sbi	0x12, 3	; 18
+ 29a:	93 9a       	sbi	0x12, 3	; 18
 	}
 	if (Button0State==Hz1) 
- 2bc:	80 91 82 00 	lds	r24, 0x0082
- 2c0:	81 30       	cpi	r24, 0x01	; 1
- 2c2:	c1 f5       	brne	.+112    	; 0x334 <Switch+0xf0>
+ 29c:	80 91 7e 00 	lds	r24, 0x007E
+ 2a0:	81 30       	cpi	r24, 0x01	; 1
+ 2a2:	61 f5       	brne	.+88     	; 0x2fc <Switch+0xd8>
 	{
 		if (Button1State==uS100)
- 2c4:	80 91 60 00 	lds	r24, 0x0060
- 2c8:	81 30       	cpi	r24, 0x01	; 1
- 2ca:	29 f4       	brne	.+10     	; 0x2d6 <Switch+0x92>
+ 2a4:	80 91 60 00 	lds	r24, 0x0060
+ 2a8:	81 30       	cpi	r24, 0x01	; 1
+ 2aa:	29 f4       	brne	.+10     	; 0x2b6 <Switch+0x92>
 		{
 			duration_timer=5; period_timer=62500;
- 2cc:	85 e0       	ldi	r24, 0x05	; 5
- 2ce:	90 e0       	ldi	r25, 0x00	; 0
- 2d0:	a0 e0       	ldi	r26, 0x00	; 0
- 2d2:	b0 e0       	ldi	r27, 0x00	; 0
- 2d4:	08 c0       	rjmp	.+16     	; 0x2e6 <Switch+0xa2>
+ 2ac:	85 e0       	ldi	r24, 0x05	; 5
+ 2ae:	90 e0       	ldi	r25, 0x00	; 0
+ 2b0:	a0 e0       	ldi	r26, 0x00	; 0
+ 2b2:	b0 e0       	ldi	r27, 0x00	; 0
+ 2b4:	0d c0       	rjmp	.+26     	; 0x2d0 <Switch+0xac>
 		}
 		else if (Button1State==Duty_50)
- 2d6:	80 91 60 00 	lds	r24, 0x0060
- 2da:	82 30       	cpi	r24, 0x02	; 2
- 2dc:	89 f4       	brne	.+34     	; 0x300 <Switch+0xbc>
+ 2b6:	80 91 60 00 	lds	r24, 0x0060
+ 2ba:	82 30       	cpi	r24, 0x02	; 2
+ 2bc:	29 f4       	brne	.+10     	; 0x2c8 <Switch+0xa4>
 		{
 			duration_timer=31500; period_timer=62500;
- 2de:	8c e0       	ldi	r24, 0x0C	; 12
- 2e0:	9b e7       	ldi	r25, 0x7B	; 123
- 2e2:	a0 e0       	ldi	r26, 0x00	; 0
- 2e4:	b0 e0       	ldi	r27, 0x00	; 0
- 2e6:	80 93 7a 00 	sts	0x007A, r24
- 2ea:	90 93 7b 00 	sts	0x007B, r25
- 2ee:	a0 93 7c 00 	sts	0x007C, r26
- 2f2:	b0 93 7d 00 	sts	0x007D, r27
- 2f6:	84 e2       	ldi	r24, 0x24	; 36
- 2f8:	94 ef       	ldi	r25, 0xF4	; 244
- 2fa:	a0 e0       	ldi	r26, 0x00	; 0
- 2fc:	b0 e0       	ldi	r27, 0x00	; 0
- 2fe:	10 c0       	rjmp	.+32     	; 0x320 <Switch+0xdc>
+ 2be:	8c e0       	ldi	r24, 0x0C	; 12
+ 2c0:	9b e7       	ldi	r25, 0x7B	; 123
+ 2c2:	a0 e0       	ldi	r26, 0x00	; 0
+ 2c4:	b0 e0       	ldi	r27, 0x00	; 0
+ 2c6:	04 c0       	rjmp	.+8      	; 0x2d0 <Switch+0xac>
 		}
 		else 
 		{
-			duration_timer=5; period_timer=625;
- 300:	85 e0       	ldi	r24, 0x05	; 5
- 302:	90 e0       	ldi	r25, 0x00	; 0
- 304:	a0 e0       	ldi	r26, 0x00	; 0
- 306:	b0 e0       	ldi	r27, 0x00	; 0
- 308:	80 93 7a 00 	sts	0x007A, r24
- 30c:	90 93 7b 00 	sts	0x007B, r25
- 310:	a0 93 7c 00 	sts	0x007C, r26
- 314:	b0 93 7d 00 	sts	0x007D, r27
- 318:	81 e7       	ldi	r24, 0x71	; 113
- 31a:	92 e0       	ldi	r25, 0x02	; 2
- 31c:	a0 e0       	ldi	r26, 0x00	; 0
- 31e:	b0 e0       	ldi	r27, 0x00	; 0
- 320:	80 93 76 00 	sts	0x0076, r24
- 324:	90 93 77 00 	sts	0x0077, r25
- 328:	a0 93 78 00 	sts	0x0078, r26
- 32c:	b0 93 79 00 	sts	0x0079, r27
+			duration_timer=56250; period_timer=62500;
+ 2c8:	8a eb       	ldi	r24, 0xBA	; 186
+ 2ca:	9b ed       	ldi	r25, 0xDB	; 219
+ 2cc:	a0 e0       	ldi	r26, 0x00	; 0
+ 2ce:	b0 e0       	ldi	r27, 0x00	; 0
+ 2d0:	80 93 76 00 	sts	0x0076, r24
+ 2d4:	90 93 77 00 	sts	0x0077, r25
+ 2d8:	a0 93 78 00 	sts	0x0078, r26
+ 2dc:	b0 93 79 00 	sts	0x0079, r27
+ 2e0:	84 e2       	ldi	r24, 0x24	; 36
+ 2e2:	94 ef       	ldi	r25, 0xF4	; 244
+ 2e4:	a0 e0       	ldi	r26, 0x00	; 0
+ 2e6:	b0 e0       	ldi	r27, 0x00	; 0
+ 2e8:	80 93 72 00 	sts	0x0072, r24
+ 2ec:	90 93 73 00 	sts	0x0073, r25
+ 2f0:	a0 93 74 00 	sts	0x0074, r26
+ 2f4:	b0 93 75 00 	sts	0x0075, r27
 		}
 		PORTD|=_BV(PD2);//диод 2 горит
- 330:	92 9a       	sbi	0x12, 2	; 18
+ 2f8:	92 9a       	sbi	0x12, 2	; 18
 		PORTD&=~_BV(PD3);//диод 3 не горит
- 332:	93 98       	cbi	0x12, 3	; 18
+ 2fa:	93 98       	cbi	0x12, 3	; 18
 	} 
 	if (Button0State==Hz100)
- 334:	80 91 82 00 	lds	r24, 0x0082
- 338:	82 30       	cpi	r24, 0x02	; 2
- 33a:	61 f5       	brne	.+88     	; 0x394 <Switch+0x150>
+ 2fc:	80 91 7e 00 	lds	r24, 0x007E
+ 300:	82 30       	cpi	r24, 0x02	; 2
+ 302:	61 f5       	brne	.+88     	; 0x35c <Switch+0x138>
 	{
 		if (Button1State==uS100)
- 33c:	80 91 60 00 	lds	r24, 0x0060
- 340:	81 30       	cpi	r24, 0x01	; 1
- 342:	29 f4       	brne	.+10     	; 0x34e <Switch+0x10a>
+ 304:	80 91 60 00 	lds	r24, 0x0060
+ 308:	81 30       	cpi	r24, 0x01	; 1
+ 30a:	29 f4       	brne	.+10     	; 0x316 <Switch+0xf2>
 		{
 			duration_timer=5; period_timer=625;
- 344:	85 e0       	ldi	r24, 0x05	; 5
- 346:	90 e0       	ldi	r25, 0x00	; 0
- 348:	a0 e0       	ldi	r26, 0x00	; 0
- 34a:	b0 e0       	ldi	r27, 0x00	; 0
- 34c:	0d c0       	rjmp	.+26     	; 0x368 <Switch+0x124>
+ 30c:	85 e0       	ldi	r24, 0x05	; 5
+ 30e:	90 e0       	ldi	r25, 0x00	; 0
+ 310:	a0 e0       	ldi	r26, 0x00	; 0
+ 312:	b0 e0       	ldi	r27, 0x00	; 0
+ 314:	0d c0       	rjmp	.+26     	; 0x330 <Switch+0x10c>
 		}
 		else if (Button1State==Duty_50)
- 34e:	80 91 60 00 	lds	r24, 0x0060
- 352:	82 30       	cpi	r24, 0x02	; 2
- 354:	29 f4       	brne	.+10     	; 0x360 <Switch+0x11c>
+ 316:	80 91 60 00 	lds	r24, 0x0060
+ 31a:	82 30       	cpi	r24, 0x02	; 2
+ 31c:	29 f4       	brne	.+10     	; 0x328 <Switch+0x104>
 		{
 			duration_timer=315; period_timer=625;
- 356:	8b e3       	ldi	r24, 0x3B	; 59
- 358:	91 e0       	ldi	r25, 0x01	; 1
- 35a:	a0 e0       	ldi	r26, 0x00	; 0
- 35c:	b0 e0       	ldi	r27, 0x00	; 0
- 35e:	04 c0       	rjmp	.+8      	; 0x368 <Switch+0x124>
+ 31e:	8b e3       	ldi	r24, 0x3B	; 59
+ 320:	91 e0       	ldi	r25, 0x01	; 1
+ 322:	a0 e0       	ldi	r26, 0x00	; 0
+ 324:	b0 e0       	ldi	r27, 0x00	; 0
+ 326:	04 c0       	rjmp	.+8      	; 0x330 <Switch+0x10c>
 		}
 		else 
 		{
 			duration_timer=562; period_timer=625;
- 360:	82 e3       	ldi	r24, 0x32	; 50
- 362:	92 e0       	ldi	r25, 0x02	; 2
- 364:	a0 e0       	ldi	r26, 0x00	; 0
- 366:	b0 e0       	ldi	r27, 0x00	; 0
- 368:	80 93 7a 00 	sts	0x007A, r24
- 36c:	90 93 7b 00 	sts	0x007B, r25
- 370:	a0 93 7c 00 	sts	0x007C, r26
- 374:	b0 93 7d 00 	sts	0x007D, r27
- 378:	81 e7       	ldi	r24, 0x71	; 113
- 37a:	92 e0       	ldi	r25, 0x02	; 2
- 37c:	a0 e0       	ldi	r26, 0x00	; 0
- 37e:	b0 e0       	ldi	r27, 0x00	; 0
- 380:	80 93 76 00 	sts	0x0076, r24
- 384:	90 93 77 00 	sts	0x0077, r25
- 388:	a0 93 78 00 	sts	0x0078, r26
- 38c:	b0 93 79 00 	sts	0x0079, r27
+ 328:	82 e3       	ldi	r24, 0x32	; 50
+ 32a:	92 e0       	ldi	r25, 0x02	; 2
+ 32c:	a0 e0       	ldi	r26, 0x00	; 0
+ 32e:	b0 e0       	ldi	r27, 0x00	; 0
+ 330:	80 93 76 00 	sts	0x0076, r24
+ 334:	90 93 77 00 	sts	0x0077, r25
+ 338:	a0 93 78 00 	sts	0x0078, r26
+ 33c:	b0 93 79 00 	sts	0x0079, r27
+ 340:	81 e7       	ldi	r24, 0x71	; 113
+ 342:	92 e0       	ldi	r25, 0x02	; 2
+ 344:	a0 e0       	ldi	r26, 0x00	; 0
+ 346:	b0 e0       	ldi	r27, 0x00	; 0
+ 348:	80 93 72 00 	sts	0x0072, r24
+ 34c:	90 93 73 00 	sts	0x0073, r25
+ 350:	a0 93 74 00 	sts	0x0074, r26
+ 354:	b0 93 75 00 	sts	0x0075, r27
 		}
 		PORTD&=~_BV(PD2);//диод 2 не горит
- 390:	92 98       	cbi	0x12, 2	; 18
+ 358:	92 98       	cbi	0x12, 2	; 18
 		PORTD|=_BV(PD3);//диод 3  горит
- 392:	93 9a       	sbi	0x12, 3	; 18
+ 35a:	93 9a       	sbi	0x12, 3	; 18
 	}
-		if (Button0State==Hz1000)
- 394:	80 91 82 00 	lds	r24, 0x0082
- 398:	83 30       	cpi	r24, 0x03	; 3
- 39a:	61 f5       	brne	.+88     	; 0x3f4 <Switch+0x1b0>
+	if (Button0State==Hz1000)
+ 35c:	80 91 7e 00 	lds	r24, 0x007E
+ 360:	83 30       	cpi	r24, 0x03	; 3
+ 362:	61 f5       	brne	.+88     	; 0x3bc <Switch+0x198>
 	{
 		if (Button1State==uS100)
- 39c:	80 91 60 00 	lds	r24, 0x0060
- 3a0:	81 30       	cpi	r24, 0x01	; 1
- 3a2:	29 f4       	brne	.+10     	; 0x3ae <Switch+0x16a>
+ 364:	80 91 60 00 	lds	r24, 0x0060
+ 368:	81 30       	cpi	r24, 0x01	; 1
+ 36a:	29 f4       	brne	.+10     	; 0x376 <Switch+0x152>
 		{
 			duration_timer=5; period_timer=62;
- 3a4:	85 e0       	ldi	r24, 0x05	; 5
- 3a6:	90 e0       	ldi	r25, 0x00	; 0
- 3a8:	a0 e0       	ldi	r26, 0x00	; 0
- 3aa:	b0 e0       	ldi	r27, 0x00	; 0
- 3ac:	0d c0       	rjmp	.+26     	; 0x3c8 <Switch+0x184>
+ 36c:	85 e0       	ldi	r24, 0x05	; 5
+ 36e:	90 e0       	ldi	r25, 0x00	; 0
+ 370:	a0 e0       	ldi	r26, 0x00	; 0
+ 372:	b0 e0       	ldi	r27, 0x00	; 0
+ 374:	0d c0       	rjmp	.+26     	; 0x390 <Switch+0x16c>
 		}
 		else if (Button1State==Duty_50)
- 3ae:	80 91 60 00 	lds	r24, 0x0060
- 3b2:	82 30       	cpi	r24, 0x02	; 2
- 3b4:	29 f4       	brne	.+10     	; 0x3c0 <Switch+0x17c>
+ 376:	80 91 60 00 	lds	r24, 0x0060
+ 37a:	82 30       	cpi	r24, 0x02	; 2
+ 37c:	29 f4       	brne	.+10     	; 0x388 <Switch+0x164>
 		{
 			duration_timer=31; period_timer=62;
- 3b6:	8f e1       	ldi	r24, 0x1F	; 31
- 3b8:	90 e0       	ldi	r25, 0x00	; 0
- 3ba:	a0 e0       	ldi	r26, 0x00	; 0
- 3bc:	b0 e0       	ldi	r27, 0x00	; 0
- 3be:	04 c0       	rjmp	.+8      	; 0x3c8 <Switch+0x184>
+ 37e:	8f e1       	ldi	r24, 0x1F	; 31
+ 380:	90 e0       	ldi	r25, 0x00	; 0
+ 382:	a0 e0       	ldi	r26, 0x00	; 0
+ 384:	b0 e0       	ldi	r27, 0x00	; 0
+ 386:	04 c0       	rjmp	.+8      	; 0x390 <Switch+0x16c>
 		}
 		else
 		{
 			duration_timer=56; period_timer=62;
- 3c0:	88 e3       	ldi	r24, 0x38	; 56
- 3c2:	90 e0       	ldi	r25, 0x00	; 0
- 3c4:	a0 e0       	ldi	r26, 0x00	; 0
- 3c6:	b0 e0       	ldi	r27, 0x00	; 0
- 3c8:	80 93 7a 00 	sts	0x007A, r24
- 3cc:	90 93 7b 00 	sts	0x007B, r25
- 3d0:	a0 93 7c 00 	sts	0x007C, r26
- 3d4:	b0 93 7d 00 	sts	0x007D, r27
- 3d8:	8e e3       	ldi	r24, 0x3E	; 62
- 3da:	90 e0       	ldi	r25, 0x00	; 0
- 3dc:	a0 e0       	ldi	r26, 0x00	; 0
- 3de:	b0 e0       	ldi	r27, 0x00	; 0
- 3e0:	80 93 76 00 	sts	0x0076, r24
- 3e4:	90 93 77 00 	sts	0x0077, r25
- 3e8:	a0 93 78 00 	sts	0x0078, r26
- 3ec:	b0 93 79 00 	sts	0x0079, r27
+ 388:	88 e3       	ldi	r24, 0x38	; 56
+ 38a:	90 e0       	ldi	r25, 0x00	; 0
+ 38c:	a0 e0       	ldi	r26, 0x00	; 0
+ 38e:	b0 e0       	ldi	r27, 0x00	; 0
+ 390:	80 93 76 00 	sts	0x0076, r24
+ 394:	90 93 77 00 	sts	0x0077, r25
+ 398:	a0 93 78 00 	sts	0x0078, r26
+ 39c:	b0 93 79 00 	sts	0x0079, r27
+ 3a0:	8e e3       	ldi	r24, 0x3E	; 62
+ 3a2:	90 e0       	ldi	r25, 0x00	; 0
+ 3a4:	a0 e0       	ldi	r26, 0x00	; 0
+ 3a6:	b0 e0       	ldi	r27, 0x00	; 0
+ 3a8:	80 93 72 00 	sts	0x0072, r24
+ 3ac:	90 93 73 00 	sts	0x0073, r25
+ 3b0:	a0 93 74 00 	sts	0x0074, r26
+ 3b4:	b0 93 75 00 	sts	0x0075, r27
 		}
 		PORTD&=~_BV(PD2);//гасим оба  светодиода
- 3f0:	92 98       	cbi	0x12, 2	; 18
+ 3b8:	92 98       	cbi	0x12, 2	; 18
 		PORTD&=~_BV(PD3);
- 3f2:	93 98       	cbi	0x12, 3	; 18
+ 3ba:	93 98       	cbi	0x12, 3	; 18
 	}
 	switch_timer=st_millis();
- 3f4:	1b df       	rcall	.-458    	; 0x22c <st_millis>
- 3f6:	60 93 6a 00 	sts	0x006A, r22
- 3fa:	70 93 6b 00 	sts	0x006B, r23
- 3fe:	80 93 6c 00 	sts	0x006C, r24
- 402:	90 93 6d 00 	sts	0x006D, r25
+ 3bc:	27 df       	rcall	.-434    	; 0x20c <st_millis>
+ 3be:	60 93 66 00 	sts	0x0066, r22
+ 3c2:	70 93 67 00 	sts	0x0067, r23
+ 3c6:	80 93 68 00 	sts	0x0068, r24
+ 3ca:	90 93 69 00 	sts	0x0069, r25
 	PT_END(pt);
- 406:	19 82       	std	Y+1, r1	; 0x01
- 408:	18 82       	st	Y, r1
- 40a:	83 e0       	ldi	r24, 0x03	; 3
+ 3ce:	19 82       	std	Y+1, r1	; 0x01
+ 3d0:	18 82       	st	Y, r1
+ 3d2:	83 e0       	ldi	r24, 0x03	; 3
 }
- 40c:	df 91       	pop	r29
- 40e:	cf 91       	pop	r28
- 410:	1f 91       	pop	r17
- 412:	0f 91       	pop	r16
- 414:	08 95       	ret
+ 3d4:	df 91       	pop	r29
+ 3d6:	cf 91       	pop	r28
+ 3d8:	1f 91       	pop	r17
+ 3da:	0f 91       	pop	r16
+ 3dc:	08 95       	ret
 
-00000416 <Buttons>:
+000003de <Buttons>:
 PT_THREAD(Buttons(struct pt *pt))
 {
- 416:	0f 93       	push	r16
- 418:	1f 93       	push	r17
- 41a:	cf 93       	push	r28
- 41c:	df 93       	push	r29
- 41e:	ec 01       	movw	r28, r24
+ 3de:	0f 93       	push	r16
+ 3e0:	1f 93       	push	r17
+ 3e2:	cf 93       	push	r28
+ 3e4:	df 93       	push	r29
+ 3e6:	ec 01       	movw	r28, r24
 	static uint32_t but_timer=0;
-	static uint16_t val0, val1=0;
+	//static uint16_t val0, val1=0;
 	PT_BEGIN(pt);
- 420:	88 81       	ld	r24, Y
- 422:	99 81       	ldd	r25, Y+1	; 0x01
- 424:	00 97       	sbiw	r24, 0x00	; 0
- 426:	21 f0       	breq	.+8      	; 0x430 <Buttons+0x1a>
- 428:	82 3c       	cpi	r24, 0xC2	; 194
- 42a:	91 05       	cpc	r25, r1
- 42c:	29 f0       	breq	.+10     	; 0x438 <Buttons+0x22>
- 42e:	7b c0       	rjmp	.+246    	; 0x526 <Buttons+0x110>
-	PT_WAIT_UNTIL(pt, (st_millis()-but_timer)>=1);
- 430:	82 ec       	ldi	r24, 0xC2	; 194
- 432:	90 e0       	ldi	r25, 0x00	; 0
- 434:	99 83       	std	Y+1, r25	; 0x01
- 436:	88 83       	st	Y, r24
- 438:	f9 de       	rcall	.-526    	; 0x22c <st_millis>
- 43a:	00 91 66 00 	lds	r16, 0x0066
- 43e:	10 91 67 00 	lds	r17, 0x0067
- 442:	20 91 68 00 	lds	r18, 0x0068
- 446:	30 91 69 00 	lds	r19, 0x0069
- 44a:	60 17       	cp	r22, r16
- 44c:	71 07       	cpc	r23, r17
- 44e:	82 07       	cpc	r24, r18
- 450:	93 07       	cpc	r25, r19
- 452:	09 f4       	brne	.+2      	; 0x456 <Buttons+0x40>
- 454:	6c c0       	rjmp	.+216    	; 0x52e <Buttons+0x118>
+ 3e8:	88 81       	ld	r24, Y
+ 3ea:	99 81       	ldd	r25, Y+1	; 0x01
+ 3ec:	00 97       	sbiw	r24, 0x00	; 0
+ 3ee:	21 f0       	breq	.+8      	; 0x3f8 <Buttons+0x1a>
+ 3f0:	80 3c       	cpi	r24, 0xC0	; 192
+ 3f2:	91 05       	cpc	r25, r1
+ 3f4:	29 f0       	breq	.+10     	; 0x400 <Buttons+0x22>
+ 3f6:	52 c0       	rjmp	.+164    	; 0x49c <Buttons+0xbe>
+	PT_WAIT_UNTIL(pt, (st_millis()-but_timer)>=80);
+ 3f8:	80 ec       	ldi	r24, 0xC0	; 192
+ 3fa:	90 e0       	ldi	r25, 0x00	; 0
+ 3fc:	99 83       	std	Y+1, r25	; 0x01
+ 3fe:	88 83       	st	Y, r24
+ 400:	05 df       	rcall	.-502    	; 0x20c <st_millis>
+ 402:	00 91 62 00 	lds	r16, 0x0062
+ 406:	10 91 63 00 	lds	r17, 0x0063
+ 40a:	20 91 64 00 	lds	r18, 0x0064
+ 40e:	30 91 65 00 	lds	r19, 0x0065
+ 412:	dc 01       	movw	r26, r24
+ 414:	cb 01       	movw	r24, r22
+ 416:	80 1b       	sub	r24, r16
+ 418:	91 0b       	sbc	r25, r17
+ 41a:	a2 0b       	sbc	r26, r18
+ 41c:	b3 0b       	sbc	r27, r19
+ 41e:	80 35       	cpi	r24, 0x50	; 80
+ 420:	91 05       	cpc	r25, r1
+ 422:	a1 05       	cpc	r26, r1
+ 424:	b1 05       	cpc	r27, r1
+ 426:	f0 f1       	brcs	.+124    	; 0x4a4 <Buttons+0xc6>
 	but_timer=st_millis();
- 456:	ea de       	rcall	.-556    	; 0x22c <st_millis>
- 458:	60 93 66 00 	sts	0x0066, r22
- 45c:	70 93 67 00 	sts	0x0067, r23
- 460:	80 93 68 00 	sts	0x0068, r24
- 464:	90 93 69 00 	sts	0x0069, r25
- 468:	20 91 64 00 	lds	r18, 0x0064
- 46c:	30 91 65 00 	lds	r19, 0x0065
-	if (((PIN(BUTTON0_PORT)&(_BV(BUTTON0_PIN)))==0)&&(val0<=1000))
- 470:	85 99       	sbic	0x10, 5	; 16
- 472:	0b c0       	rjmp	.+22     	; 0x48a <Buttons+0x74>
- 474:	29 3e       	cpi	r18, 0xE9	; 233
- 476:	83 e0       	ldi	r24, 0x03	; 3
- 478:	38 07       	cpc	r19, r24
- 47a:	38 f4       	brcc	.+14     	; 0x48a <Buttons+0x74>
+ 428:	f1 de       	rcall	.-542    	; 0x20c <st_millis>
+ 42a:	60 93 62 00 	sts	0x0062, r22
+ 42e:	70 93 63 00 	sts	0x0063, r23
+ 432:	80 93 64 00 	sts	0x0064, r24
+ 436:	90 93 65 00 	sts	0x0065, r25
+	//if (((PIN(BUTTON0_PORT)&(_BV(BUTTON0_PIN)))==0)&&(val0<=10))
+	if ((PIN(BUTTON0_PORT)&(_BV(BUTTON0_PIN)))==0)
+ 43a:	85 99       	sbic	0x10, 5	; 16
+ 43c:	1a c0       	rjmp	.+52     	; 0x472 <Buttons+0x94>
 	{
-		val0++;
- 47c:	2f 5f       	subi	r18, 0xFF	; 255
- 47e:	3f 4f       	sbci	r19, 0xFF	; 255
- 480:	30 93 65 00 	sts	0x0065, r19
- 484:	20 93 64 00 	sts	0x0064, r18
- 488:	21 c0       	rjmp	.+66     	; 0x4cc <Buttons+0xb6>
-	}
-	else
-	{
-		if (val0>900)
- 48a:	25 38       	cpi	r18, 0x85	; 133
- 48c:	33 40       	sbci	r19, 0x03	; 3
- 48e:	d0 f0       	brcs	.+52     	; 0x4c4 <Buttons+0xae>
-		{
-			if (Button0State==MANUAL) Button0State=Hz1; //при долгом нажатии кн0, проиходит смена периода
- 490:	80 91 82 00 	lds	r24, 0x0082
- 494:	81 11       	cpse	r24, r1
- 496:	02 c0       	rjmp	.+4      	; 0x49c <Buttons+0x86>
- 498:	81 e0       	ldi	r24, 0x01	; 1
- 49a:	05 c0       	rjmp	.+10     	; 0x4a6 <Buttons+0x90>
-			else if (Button0State==Hz1) Button0State=Hz100;
- 49c:	80 91 82 00 	lds	r24, 0x0082
- 4a0:	81 30       	cpi	r24, 0x01	; 1
- 4a2:	21 f4       	brne	.+8      	; 0x4ac <Buttons+0x96>
- 4a4:	82 e0       	ldi	r24, 0x02	; 2
- 4a6:	80 93 82 00 	sts	0x0082, r24
- 4aa:	0c c0       	rjmp	.+24     	; 0x4c4 <Buttons+0xae>
-			else if (Button0State==Hz100) Button0State=Hz1000;
- 4ac:	80 91 82 00 	lds	r24, 0x0082
- 4b0:	82 30       	cpi	r24, 0x02	; 2
- 4b2:	11 f4       	brne	.+4      	; 0x4b8 <Buttons+0xa2>
- 4b4:	83 e0       	ldi	r24, 0x03	; 3
- 4b6:	f7 cf       	rjmp	.-18     	; 0x4a6 <Buttons+0x90>
-			else if (Button0State==Hz1000) Button0State=MANUAL;
- 4b8:	80 91 82 00 	lds	r24, 0x0082
- 4bc:	83 30       	cpi	r24, 0x03	; 3
- 4be:	11 f4       	brne	.+4      	; 0x4c4 <Buttons+0xae>
- 4c0:	10 92 82 00 	sts	0x0082, r1
-			else if (Button0State==Hz100) Button0State=Hz1000;
-			else if (Button0State==Hz1000) Button0State=MANUAL;
-			//button_change_state();
+		if (Button0State==MANUAL) Button0State=Hz1; //при долгом нажатии кн0, проиходит смена периода
+ 43e:	80 91 7e 00 	lds	r24, 0x007E
+ 442:	81 11       	cpse	r24, r1
+ 444:	02 c0       	rjmp	.+4      	; 0x44a <Buttons+0x6c>
+ 446:	81 e0       	ldi	r24, 0x01	; 1
+ 448:	05 c0       	rjmp	.+10     	; 0x454 <Buttons+0x76>
+		else if (Button0State==Hz1) Button0State=Hz100;
+ 44a:	80 91 7e 00 	lds	r24, 0x007E
+ 44e:	81 30       	cpi	r24, 0x01	; 1
+ 450:	21 f4       	brne	.+8      	; 0x45a <Buttons+0x7c>
+ 452:	82 e0       	ldi	r24, 0x02	; 2
+ 454:	80 93 7e 00 	sts	0x007E, r24
+ 458:	0c c0       	rjmp	.+24     	; 0x472 <Buttons+0x94>
+		else if (Button0State==Hz100) Button0State=Hz1000;
+ 45a:	80 91 7e 00 	lds	r24, 0x007E
+ 45e:	82 30       	cpi	r24, 0x02	; 2
+ 460:	11 f4       	brne	.+4      	; 0x466 <Buttons+0x88>
+ 462:	83 e0       	ldi	r24, 0x03	; 3
+ 464:	f7 cf       	rjmp	.-18     	; 0x454 <Buttons+0x76>
+		else if (Button0State==Hz1000) Button0State=MANUAL;
+ 466:	80 91 7e 00 	lds	r24, 0x007E
+ 46a:	83 30       	cpi	r24, 0x03	; 3
+ 46c:	11 f4       	brne	.+4      	; 0x472 <Buttons+0x94>
+ 46e:	10 92 7e 00 	sts	0x007E, r1
+			//ButtonState=BUTTON_LONG_ON; - это сейчас не нужно, вдруг пригодится обрабатывать долгие нажатия
+			//PT_WAIT_UNTIL(pt,(st_millis()-but_timer)>=1000);
 		}
-*/
-		val0=0;
- 4c4:	10 92 65 00 	sts	0x0065, r1
- 4c8:	10 92 64 00 	sts	0x0064, r1
- 4cc:	20 91 62 00 	lds	r18, 0x0062
- 4d0:	30 91 63 00 	lds	r19, 0x0063
-	}
-	if (((PIN(BUTTON1_PORT)&(_BV(BUTTON1_PIN)))==0)&&(val1<=1000))
- 4d4:	86 99       	sbic	0x10, 6	; 16
- 4d6:	0b c0       	rjmp	.+22     	; 0x4ee <Buttons+0xd8>
- 4d8:	29 3e       	cpi	r18, 0xE9	; 233
- 4da:	83 e0       	ldi	r24, 0x03	; 3
- 4dc:	38 07       	cpc	r19, r24
- 4de:	38 f4       	brcc	.+14     	; 0x4ee <Buttons+0xd8>
-	{
-		val1++;
- 4e0:	2f 5f       	subi	r18, 0xFF	; 255
- 4e2:	3f 4f       	sbci	r19, 0xFF	; 255
- 4e4:	30 93 63 00 	sts	0x0063, r19
- 4e8:	20 93 62 00 	sts	0x0062, r18
- 4ec:	1c c0       	rjmp	.+56     	; 0x526 <Buttons+0x110>
-	}
-	else
-	{
-		if (val1>900)
- 4ee:	25 38       	cpi	r18, 0x85	; 133
- 4f0:	33 40       	sbci	r19, 0x03	; 3
- 4f2:	a8 f0       	brcs	.+42     	; 0x51e <Buttons+0x108>
-		{
-			if (Button1State==uS100) Button1State=Duty_50; //долгое нажатие кн1 - смена длительности
- 4f4:	80 91 60 00 	lds	r24, 0x0060
- 4f8:	81 30       	cpi	r24, 0x01	; 1
- 4fa:	11 f4       	brne	.+4      	; 0x500 <Buttons+0xea>
- 4fc:	82 e0       	ldi	r24, 0x02	; 2
- 4fe:	05 c0       	rjmp	.+10     	; 0x50a <Buttons+0xf4>
-			else if (Button1State==Duty_50) Button1State=Duty_90;
- 500:	80 91 60 00 	lds	r24, 0x0060
- 504:	82 30       	cpi	r24, 0x02	; 2
- 506:	21 f4       	brne	.+8      	; 0x510 <Buttons+0xfa>
- 508:	83 e0       	ldi	r24, 0x03	; 3
- 50a:	80 93 60 00 	sts	0x0060, r24
- 50e:	07 c0       	rjmp	.+14     	; 0x51e <Buttons+0x108>
-			else if (Button0State==Duty_90) Button0State=uS100;
- 510:	80 91 82 00 	lds	r24, 0x0082
- 514:	83 30       	cpi	r24, 0x03	; 3
- 516:	19 f4       	brne	.+6      	; 0x51e <Buttons+0x108>
- 518:	81 e0       	ldi	r24, 0x01	; 1
- 51a:	80 93 82 00 	sts	0x0082, r24
-			else if (Button1State==Duty_50) Button1State=Duty_90;
-			else if (Button0State==Duty_90) Button0State=uS100;
-			//button_change_state();
-		}
-*/
 		val1=0;
- 51e:	10 92 63 00 	sts	0x0063, r1
- 522:	10 92 62 00 	sts	0x0062, r1
+	}*/
+	if ((PIN(BUTTON1_PORT)&(_BV(BUTTON1_PIN)))==0)
+ 472:	86 99       	sbic	0x10, 6	; 16
+ 474:	13 c0       	rjmp	.+38     	; 0x49c <Buttons+0xbe>
+	{
+		if (Button1State==uS100) Button1State=Duty_50; //долгое нажатие кн1 - смена длительности
+ 476:	80 91 60 00 	lds	r24, 0x0060
+ 47a:	81 30       	cpi	r24, 0x01	; 1
+ 47c:	11 f4       	brne	.+4      	; 0x482 <Buttons+0xa4>
+ 47e:	82 e0       	ldi	r24, 0x02	; 2
+ 480:	0b c0       	rjmp	.+22     	; 0x498 <Buttons+0xba>
+		else if (Button1State==Duty_50) Button1State=Duty_90;
+ 482:	80 91 60 00 	lds	r24, 0x0060
+ 486:	82 30       	cpi	r24, 0x02	; 2
+ 488:	11 f4       	brne	.+4      	; 0x48e <Buttons+0xb0>
+ 48a:	83 e0       	ldi	r24, 0x03	; 3
+ 48c:	05 c0       	rjmp	.+10     	; 0x498 <Buttons+0xba>
+		else if (Button1State==Duty_90) Button1State=uS100;
+ 48e:	80 91 60 00 	lds	r24, 0x0060
+ 492:	83 30       	cpi	r24, 0x03	; 3
+ 494:	19 f4       	brne	.+6      	; 0x49c <Buttons+0xbe>
+ 496:	81 e0       	ldi	r24, 0x01	; 1
+ 498:	80 93 60 00 	sts	0x0060, r24
+		//ButtonState=BUTTON_LONG_ON; - это сейчас не нужно, вдруг пригодится обрабатывать долгие нажатия
+		//PT_WAIT_UNTIL(pt,(st_millis()-but_timer)>=1000);
 	}
 	PT_END(pt);
- 526:	19 82       	std	Y+1, r1	; 0x01
- 528:	18 82       	st	Y, r1
- 52a:	83 e0       	ldi	r24, 0x03	; 3
- 52c:	01 c0       	rjmp	.+2      	; 0x530 <Buttons+0x11a>
+ 49c:	19 82       	std	Y+1, r1	; 0x01
+ 49e:	18 82       	st	Y, r1
+ 4a0:	83 e0       	ldi	r24, 0x03	; 3
+ 4a2:	01 c0       	rjmp	.+2      	; 0x4a6 <Buttons+0xc8>
 PT_THREAD(Buttons(struct pt *pt))
 {
 	static uint32_t but_timer=0;
-	static uint16_t val0, val1=0;
+	//static uint16_t val0, val1=0;
 	PT_BEGIN(pt);
-	PT_WAIT_UNTIL(pt, (st_millis()-but_timer)>=1);
- 52e:	80 e0       	ldi	r24, 0x00	; 0
-		}
-*/
-		val1=0;
+	PT_WAIT_UNTIL(pt, (st_millis()-but_timer)>=80);
+ 4a4:	80 e0       	ldi	r24, 0x00	; 0
+		else if (Button1State==Duty_90) Button1State=uS100;
+		//ButtonState=BUTTON_LONG_ON; - это сейчас не нужно, вдруг пригодится обрабатывать долгие нажатия
+		//PT_WAIT_UNTIL(pt,(st_millis()-but_timer)>=1000);
 	}
 	PT_END(pt);
 }
- 530:	df 91       	pop	r29
- 532:	cf 91       	pop	r28
- 534:	1f 91       	pop	r17
- 536:	0f 91       	pop	r16
- 538:	08 95       	ret
+ 4a6:	df 91       	pop	r29
+ 4a8:	cf 91       	pop	r28
+ 4aa:	1f 91       	pop	r17
+ 4ac:	0f 91       	pop	r16
+ 4ae:	08 95       	ret
 
-0000053a <main>:
+000004b0 <main>:
 }
 
 int main(void)
 {
 
-	DDRD=0b11111110; //all pins on portd are outputs, exept PD0 - RX
- 53a:	8e ef       	ldi	r24, 0xFE	; 254
- 53c:	81 bb       	out	0x11, r24	; 17
+	DDRD=0b00011110; //PD6 - button1, PD5 - button0, PD4 - OUT, PD3 - LED1, PD2- LED0, PD1 -TX, PD0 - RX
+ 4b0:	8e e1       	ldi	r24, 0x1E	; 30
+ 4b2:	81 bb       	out	0x11, r24	; 17
 	DDRB=0b11111111; //all pins on portb are outputs
- 53e:	8f ef       	ldi	r24, 0xFF	; 255
- 540:	87 bb       	out	0x17, r24	; 23
-	PORTD=0;
- 542:	12 ba       	out	0x12, r1	; 18
+ 4b4:	8f ef       	ldi	r24, 0xFF	; 255
+ 4b6:	87 bb       	out	0x17, r24	; 23
+	PORTD=0b01100000;//100k pull-up PD6, PD5
+ 4b8:	80 e6       	ldi	r24, 0x60	; 96
+ 4ba:	82 bb       	out	0x12, r24	; 18
 	PORTB=0;
- 544:	18 ba       	out	0x18, r1	; 24
+ 4bc:	18 ba       	out	0x18, r1	; 24
 	// Set prescaler to 64
 	//TCCR0 |= (_BV(CS01) | _BV(CS00));
 	// Enable interrupt
 	//TIMSK |= _BV(TOIE0) | _BV(OCIE1A);
 	// Set default value
 	TCCR0A=0b00000010;//CTC operation of timer
- 546:	82 e0       	ldi	r24, 0x02	; 2
- 548:	80 bf       	out	0x30, r24	; 48
-	TCCR0A=0b00000001;//Timer count from clk with no prescaler
- 54a:	81 e0       	ldi	r24, 0x01	; 1
- 54c:	80 bf       	out	0x30, r24	; 48
+ 4be:	82 e0       	ldi	r24, 0x02	; 2
+ 4c0:	80 bf       	out	0x30, r24	; 48
+	TCCR0B=0b00000001;//Timer count from clk with no prescaler
+ 4c2:	81 e0       	ldi	r24, 0x01	; 1
+ 4c4:	83 bf       	out	0x33, r24	; 51
 	TCNT0 = 0; //обнуляем счетчик таймера
- 54e:	12 be       	out	0x32, r1	; 50
+ 4c6:	12 be       	out	0x32, r1	; 50
 	OCR0A = 100;//прерывание каждые 100тиков, то есть каждые 25мкс
- 550:	84 e6       	ldi	r24, 0x64	; 100
- 552:	86 bf       	out	0x36, r24	; 54
+ 4c8:	84 e6       	ldi	r24, 0x64	; 100
+ 4ca:	86 bf       	out	0x36, r24	; 54
 	TIMSK |= _BV(OCIE0A);//разрешаем прерывание по совпадению TCNT0 с OCR0A
- 554:	89 b7       	in	r24, 0x39	; 57
- 556:	81 60       	ori	r24, 0x01	; 1
- 558:	89 bf       	out	0x39, r24	; 57
-	OCR1AL=127;//50% ШИМ 
+ 4cc:	89 b7       	in	r24, 0x39	; 57
+ 4ce:	81 60       	ori	r24, 0x01	; 1
+ 4d0:	89 bf       	out	0x39, r24	; 57
 	TCNT1=0;
 	TIMSK=0;
 	*/
+	//PT_SEM_INIT(&manual_pulse, NOPULSE);
 	
 	PT_INIT(&Buttons_pt);
- 55a:	10 92 8c 00 	sts	0x008C, r1
- 55e:	10 92 8b 00 	sts	0x008B, r1
+ 4d2:	10 92 88 00 	sts	0x0088, r1
+ 4d6:	10 92 87 00 	sts	0x0087, r1
 	PT_INIT(&Switch_pt);
- 562:	10 92 8a 00 	sts	0x008A, r1
- 566:	10 92 89 00 	sts	0x0089, r1
+ 4da:	10 92 86 00 	sts	0x0086, r1
+ 4de:	10 92 85 00 	sts	0x0085, r1
 	//PT_INIT(&Sync_pt);
 
 	wdt_reset(); //сбрасываем собаку на всякий пожарный
- 56a:	a8 95       	wdr
+ 4e2:	a8 95       	wdr
 __attribute__ ((__always_inline__))
 void wdt_enable (const uint8_t value)
 {
 	if (_SFR_IO_REG_P (_WD_CONTROL_REG))
 	{
 		__asm__ __volatile__ (
- 56c:	9f e0       	ldi	r25, 0x0F	; 15
- 56e:	88 e1       	ldi	r24, 0x18	; 24
- 570:	0f b6       	in	r0, 0x3f	; 63
- 572:	f8 94       	cli
- 574:	a8 95       	wdr
- 576:	81 bd       	out	0x21, r24	; 33
- 578:	0f be       	out	0x3f, r0	; 63
- 57a:	91 bd       	out	0x21, r25	; 33
+ 4e4:	9f e0       	ldi	r25, 0x0F	; 15
+ 4e6:	88 e1       	ldi	r24, 0x18	; 24
+ 4e8:	0f b6       	in	r0, 0x3f	; 63
+ 4ea:	f8 94       	cli
+ 4ec:	a8 95       	wdr
+ 4ee:	81 bd       	out	0x21, r24	; 33
+ 4f0:	0f be       	out	0x3f, r0	; 63
+ 4f2:	91 bd       	out	0x21, r25	; 33
 	wdt_enable(WDTO_2S); //запускаем собаку с перидом 2с
 	
 	sei();
- 57c:	78 94       	sei
+ 4f4:	78 94       	sei
 
     while(1)
     {
         PT_SCHEDULE(Buttons(&Buttons_pt));
- 57e:	8b e8       	ldi	r24, 0x8B	; 139
- 580:	90 e0       	ldi	r25, 0x00	; 0
- 582:	49 df       	rcall	.-366    	; 0x416 <Buttons>
+ 4f6:	87 e8       	ldi	r24, 0x87	; 135
+ 4f8:	90 e0       	ldi	r25, 0x00	; 0
+ 4fa:	71 df       	rcall	.-286    	; 0x3de <Buttons>
 		PT_SCHEDULE(Switch(&Switch_pt));
- 584:	89 e8       	ldi	r24, 0x89	; 137
- 586:	90 e0       	ldi	r25, 0x00	; 0
- 588:	5d de       	rcall	.-838    	; 0x244 <Switch>
+ 4fc:	85 e8       	ldi	r24, 0x85	; 133
+ 4fe:	90 e0       	ldi	r25, 0x00	; 0
+ 500:	91 de       	rcall	.-734    	; 0x224 <Switch>
 		wdt_reset(); //переодически сбрасываем собаку чтобы не улетететь в ресет
- 58a:	a8 95       	wdr
+ 502:	a8 95       	wdr
 	 }
- 58c:	f8 cf       	rjmp	.-16     	; 0x57e <main+0x44>
+ 504:	f8 cf       	rjmp	.-16     	; 0x4f6 <main+0x46>
 
-0000058e <_exit>:
- 58e:	f8 94       	cli
+00000506 <_exit>:
+ 506:	f8 94       	cli
 
-00000590 <__stop_program>:
- 590:	ff cf       	rjmp	.-2      	; 0x590 <__stop_program>
+00000508 <__stop_program>:
+ 508:	ff cf       	rjmp	.-2      	; 0x508 <__stop_program>
