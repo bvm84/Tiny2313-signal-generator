@@ -39,6 +39,37 @@
   Если кнопка0= 2 и кнопка1=1 - частоты 1000ГЦ(светодиды 00), длительность 496мкс, 62тиков, 31 тиков - скважность 0,5
   Если кнопка0= 3 и кнопка1=2 - частоты 1000ГЦ(светодиды 00), длительность 896мкс, 62тиков, 56 тиков - скважность 0,9
  
+Для версии 3.0
+Можно сделать очень изящно, и универсально, но пользоваться тяжело будет и не влезет в 2313.
+Текущая версия хороша именно как простой генератор с  возможностью ручного запуска.
+Более универсальное решение будет неудобнее.
+typedef struct {
+	uint8_t state;
+	uint8_t regime;
+	uint16_t duration;
+	uint8_t duration_multiplier;
+	uint8_t duration_divider;
+	uint16_t period;
+	uint8_t period_multiplier;
+	uint8_t period_divider;
+	uint8_t prescaler_mask_id;
+} generator_struct;
+
+BUT0 - вкл/выкл генерация, ручной запуск - state
+BUT1 - выбор режима - regime
+BUT2 - выбор параметра для измения - duration, period, prescaler
+(прескейлер, частота, делитель чатоты(сдвиг вправо на двойку, деление кратное двойке), множитель частоты, 
+длительность, делитель длительности, множитель длительности)
+BUT3 - увеличение параметра
+BUT4 - уменьшение параметра
+Суть программы - пользователь грузит в структуру таймера все значения в протопотоке кнопок.
+Протопотоке настройки аппаратног таймера, исходя из настроек в структуре.
+Протопток UART, пользователь шлет данные в структуру генератора, а протопоток настройки опять же все делает.
+ 
+Но для данной реализации нужен скорее всего уже дисплей, а значит в этот камень не влезет,
+да и лучше не кнопки, а энкодер. Да и тогда уж деление не на двойку, а просто выставляешь частоту и скважность 
+и молотишь.
+Так что в данной реализации все нормально, версию 3.0 при необходимости реализовывать уже на другом камне и плате.
   
  */ 
 
@@ -58,11 +89,11 @@
 #define OUT_PORT PORTD
 #define OUT_PORT_DDR DDRD
 #define OUT_PORT_PIN PIND
-#define BUT0 PD5
+#define BUT0 PD6 //левая кнопка
 #define BUT0_PORT PORTD
 #define BUT0_PORT_DDR DDRD
 #define BUT0_PORT_PIN PIND
-#define BUT1 PD6
+#define BUT1 PD5 //правая кнопка
 #define BUT1_PORT PORTD
 #define BUT1_PORT_DDR DDRD
 #define BUT1_PORT_PIN PIND
@@ -191,13 +222,13 @@ PT_THREAD(Sync(struct pt *pt))
 	PT_BEGIN(pt);
 	//PT_SEM_SIGNAL(pt, &manual_pulse); //устанавливает 1 в manual_pulse, сигнализируя что кнопки больше не опрашивались в другом пропотоке
 	OUT_OFF; //устанавливаем 0 на выходе
-	if ((BUT1_PORT_PIN&(_BV(BUT1)))==0)
+	if ((BUT0_PORT_PIN&(_BV(BUT0)))==0)
 	{
 		LED0_ON;
 		OUT_ON; //устанавливаем 1 на выходе
 		_delay_us(5); //держим 1 на пине 80 микросекунд
 		OUT_OFF; //сбрасываем выход в 0
-		_delay_ms(10); //задержка перед следующим срабатыванием
+		_delay_ms(500); //задержка перед следующим срабатыванием
 		LED0_OFF;
 	}
 	PT_EXIT(pt);
@@ -211,7 +242,7 @@ PT_THREAD(Buttons(struct pt *pt))
 	PT_BEGIN(pt);
 	PT_WAIT_UNTIL(pt, (st_millis()-but_timer)>=80);
 	but_timer=st_millis();
-	if ((BUT0_PORT_PIN&(_BV(BUT0)))==0)
+	if ((BUT1_PORT_PIN&(_BV(BUT1)))==0)
 	{
 		if (p_generator->regime==GEN_MANUAL) 
 		{
@@ -233,7 +264,7 @@ PT_THREAD(Buttons(struct pt *pt))
 		p_generator->state=GEN_OFF;
 		GENERATOR_OFF;
 	}
-	if ((BUT1_PORT_PIN&(_BV(BUT1)))==0)
+	if ((BUT0_PORT_PIN&(_BV(BUT0)))==0)
 	{
 		if (p_generator->duration==DURATION_US320) 
 		{
@@ -259,6 +290,7 @@ PT_THREAD(Switch(struct pt *pt))
 	static volatile uint32_t switch_timer=0;
 	PT_BEGIN(pt);
 	PT_WAIT_UNTIL(pt,(st_millis()-switch_timer)>=10);//запуск протопотока каждые 10мсек
+	switch_timer=st_millis();
 	if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->state==GEN_OFF))
 	{
 		if (p_generator->period==PERIOD_HZ1000)
@@ -307,7 +339,6 @@ PT_THREAD(Switch(struct pt *pt))
 		LED0_OFF;
 		LED1_OFF;
 	}
-	switch_timer=st_millis();
 	PT_END(pt);
 }
 PT_THREAD(Leds(struct pt *pt))
@@ -316,6 +347,7 @@ PT_THREAD(Leds(struct pt *pt))
 	static volatile uint8_t counter=0;
 	PT_BEGIN(pt);
 	PT_WAIT_UNTIL(pt,(st_millis()-leds_timer)>=100);//запуск протопотока каждые 0.1мсек
+	leds_timer=st_millis();
 	if (p_generator->regime==GEN_PERIODIC)
 	{
 		switch(p_generator->period)
@@ -363,6 +395,11 @@ PT_THREAD(Leds(struct pt *pt))
 			LED1_ON;
 		}
 	}
+	else
+	{
+		LED0_OFF;
+		LED1_OFF;	
+	}
 	PT_END(pt);
 }
 /*?Протопотоки*/
@@ -376,7 +413,7 @@ int main(void)
 	p_generator->duration=DURATION_US320;
 	p_generator->period=PERIOD_HZ1;
 	//Настройка входов-выходов
-	DDRD=0b00011110; //PD6 - button1, PD5 - button0, PD4 - OUT, PD3 - LED1, PD2- LED0, PD1 -TX, PD0 - RX
+	DDRD=0b00011110; //PD6 - button1, PD5 - button0, PD4 - LED1, PD3 - OUT, PD2- LED0, PD1 -TX, PD0 - RX
 	DDRB=0b11111111; //all pins on portb are outputs
 	PORTD=0b01100000;//100k pull-up PD6, PD5
 	PORTB=0;
@@ -392,9 +429,7 @@ int main(void)
 	TCCR1A=0b01000010;//Toggle OC1A on campare match
 	TCCR1B=0b00011100; //FastPWM with ICR s TOP, prescaler 256 ->32us resolution
 	TCNT1=0;
-	ICR1=p_generator->period;
-	OCR1=p_generator->duration;
-	TIMSK |= _BV(OCIE0A)|_BV(OCIE1A);//разрешаем прерывание по совпадению TCNT0 с OCR0A
+	TIMSK |= _BV(OCIE0A);//разрешаем прерывание по совпадению TCNT0 с OCR0A
 	
 	//Настройка UART
 	
