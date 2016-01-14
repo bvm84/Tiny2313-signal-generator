@@ -1,5 +1,7 @@
 Archive member included to satisfy reference by file (symbol)
 
+d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+                              main.o (__mulhi3)
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
                               D:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.0.71/gcc/dev/attiny2313/avr25/tiny-stack/crtattiny2313.o (exit)
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_clear_bss.o)
@@ -12,6 +14,20 @@ Discarded input sections
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
+ .text          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .data          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .bss           0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .text.libgcc.div
+                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .text.libgcc   0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .text.libgcc.prologue
+                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .text.libgcc.builtins
+                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .text.libgcc.fmul
+                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .text.libgcc.fixed
+                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
  .text          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
  .data          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
  .bss           0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
@@ -161,7 +177,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x434
+.text           0x00000000      0x466
  *(.vectors)
  .vectors       0x00000000       0x26 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.0.71/gcc/dev/attiny2313/avr25/tiny-stack/crtattiny2313.o
                 0x00000000                __vector_default
@@ -246,20 +262,23 @@ END GROUP
                 0x000000a6                __vector_4
  .text.Sync     0x000000ba       0x3c main.o
                 0x000000ba                Sync
- .text.Buttons  0x000000f6       0xe8 main.o
+ .text.Buttons  0x000000f6       0xce main.o
                 0x000000f6                Buttons
- .text.Switch   0x000001de       0xe4 main.o
-                0x000001de                Switch
- .text.Leds     0x000002c2       0xc2 main.o
-                0x000002c2                Leds
+ .text.Switch   0x000001c4      0x13a main.o
+                0x000001c4                Switch
+ .text.Leds     0x000002fe       0xb2 main.o
+                0x000002fe                Leds
  .text.startup.main
-                0x00000384       0xac main.o
-                0x00000384                main
-                0x00000430                . = ALIGN (0x2)
+                0x000003b0       0x90 main.o
+                0x000003b0                main
+ .text.libgcc.mul
+                0x00000440       0x22 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+                0x00000440                __mulhi3
+                0x00000462                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000430        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
-                0x00000430                _exit
-                0x00000430                exit
+ .fini9         0x00000462        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
+                0x00000462                _exit
+                0x00000462                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -278,11 +297,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000430        0x4 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
+ .fini0         0x00000462        0x4 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000434                _etext = .
+                0x00000466                _etext = .
 
-.data           0x00800060        0x0 load address 0x00000434
+.data           0x00800060        0x0 load address 0x00000466
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -293,17 +312,17 @@ END GROUP
                 0x00800060                _edata = .
                 0x00800060                PROVIDE (__data_end, .)
 
-.bss            0x00800060       0x21
+.bss            0x00800060       0x1d
                 0x00800060                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.counter.1700
+ .bss.counter.1696
                 0x00800060        0x1 main.o
- .bss.leds_timer.1699
+ .bss.leds_timer.1695
                 0x00800061        0x4 main.o
  .bss.switch_timer.1687
                 0x00800065        0x4 main.o
- .bss.but_timer.1680
+ .bss.but_timer.1679
                 0x00800069        0x4 main.o
  .bss.st_timer0_millis
                 0x0080006d        0x4 main.o
@@ -314,18 +333,18 @@ END GROUP
  .bss.Buttons_pt
                 0x00800077        0x2 main.o
  .bss.generator
-                0x00800079        0x8 main.o
+                0x00800079        0x4 main.o
  *(COMMON)
-                0x00800081                PROVIDE (__bss_end, .)
-                0x00000434                __data_load_start = LOADADDR (.data)
-                0x00000434                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x0080007d                PROVIDE (__bss_end, .)
+                0x00000466                __data_load_start = LOADADDR (.data)
+                0x00000466                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800081        0x0
-                0x00800081                PROVIDE (__noinit_start, .)
+.noinit         0x0080007d        0x0
+                0x0080007d                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00800081                PROVIDE (__noinit_end, .)
-                0x00800081                _end = .
-                0x00800081                PROVIDE (__heap_start, .)
+                0x0080007d                PROVIDE (__noinit_end, .)
+                0x0080007d                _end = .
+                0x0080007d                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -397,17 +416,17 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x15a
+.debug_info     0x00000000      0x15b
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000      0x15a main.o
+ .debug_info    0x00000000      0x15b main.o
 
 .debug_abbrev   0x00000000       0xdf
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0xdf main.o
 
-.debug_line     0x00000000      0x270
+.debug_line     0x00000000      0x273
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x270 main.o
+ .debug_line    0x00000000      0x273 main.o
 
 .debug_frame    0x00000000       0xfc
  *(.debug_frame)

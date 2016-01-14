@@ -87,12 +87,20 @@
 #define GEN_MANUAL 0
 #define GEN_PERIODIC 1
 #define GEN_UART 2
-#define PERIOD_HZ1 (uint16_t)((F_CPU/PRESCALER_256)) 
-#define PERIOD_HZ100 (uint16_t)((F_CPU/(PRESCALER_8*100)))
-#define PERIOD_HZ1000 (uint16_t)((F_CPU/(PRESCALER_1*1000)))
-#define DURATION_US320 (uint16_t)((F_CPU/(PRESCALER_256))/3125)
-#define DURATION_50 (uint16_t)((F_CPU/(PRESCALER_256*2)))
-#define DURATION_90 (uint16_t)((F_CPU/PRESCALER_256)*0.9)
+#define PERIOD_HZ1_TICKS (uint16_t)((F_CPU/PRESCALER_256)) 
+#define PERIOD_HZ100_TICKS (uint16_t)((F_CPU/(PRESCALER_8*100)))
+#define PERIOD_HZ1000_TICKS (uint16_t)((F_CPU/(PRESCALER_1*1000)))
+#define DURATION_US320 0
+#define DURATION_50 1
+#define DURATION_90 2
+#define PERIOD_HZ1 0
+#define PERIOD_HZ100 1
+#define PERIOD_HZ1000 2
+#define PRESCALER_1_MASK 1
+#define PRESCALER_8_MASK 2
+#define PRESCALER_64_MASK 3
+#define PRESCALER_256_MASK 8
+
 
 //Макроопредления вспомогательные
 #define B(bit_no)         (1 << (bit_no))
@@ -124,9 +132,8 @@
 typedef struct {
 	uint8_t state;
 	uint8_t regime;
-	uint16_t duration;
-	uint16_t period;
-	uint16_t prescaler;
+	uint8_t duration;
+	uint8_t period;
 } generator_struct;
 static generator_struct generator, *p_generator=&generator;
 
@@ -210,22 +217,21 @@ PT_THREAD(Buttons(struct pt *pt))
 		{
 			p_generator->regime=GEN_PERIODIC; 
 			p_generator->period=PERIOD_HZ1;
-			p_generator->prescaler=PRESCALER_256;
 		} //при долгом нажатии кн0, проиходит смена периода
 		else if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->period=PERIOD_HZ1))
 		{
 			p_generator->period=PERIOD_HZ100;
-			p_generator->prescaler=PRESCALER_8;
 		}
 		else if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->period=PERIOD_HZ100))
 		{
 			p_generator->period=PERIOD_HZ1000;
-			p_generator->prescaler=PRESCALER_1;
 		}
 		else
 		{
 			p_generator->regime=GEN_MANUAL;
 		}
+		p_generator->state=GEN_OFF;
+		GENERATOR_OFF;
 	}
 	if ((BUT1_PORT_PIN&(_BV(BUT1)))==0)
 	{
@@ -241,24 +247,48 @@ PT_THREAD(Buttons(struct pt *pt))
 		{
 			p_generator->duration=DURATION_US320;
 		}
+		p_generator->state=GEN_OFF;
+		GENERATOR_OFF;
 	}
 	PT_END(pt);
 }
 //Протопоток2 - настрока таймера1 и индикация режима работы генератора
 PT_THREAD(Switch(struct pt *pt))
 {
+	uint32_t dur=0;
 	static volatile uint32_t switch_timer=0;
 	PT_BEGIN(pt);
 	PT_WAIT_UNTIL(pt,(st_millis()-switch_timer)>=10);//запуск протопотока каждые 10мсек
-	if (p_generator->regime==GEN_PERIODIC)
+	if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->state==GEN_OFF))
 	{
-		GENERATOR_OFF;
-		if (p_generator->prescaler==PRESCALER_1)
+		if (p_generator->period==PERIOD_HZ1000)
 		{
+			TCCR1B|=PRESCALER_1_MASK;
+			ICR1=PERIOD_HZ1000;
 		}
-		ICR1=p_generator->period
-		OCR1=p_generator->duration
-		sei();
+		else if (p_generator->period==PERIOD_HZ100)
+		{
+			TCCR1B|=PRESCALER_8_MASK;
+			ICR1=PERIOD_HZ100;
+		}
+		else 
+		{
+			TCCR1B|=PRESCALER_256_MASK;
+			ICR1=PERIOD_HZ1;
+		}
+		if (p_generator->duration==DURATION_90)
+		{
+			dur=((7*ICR1)>>3);
+			OCR1=(uint16_t)dur;
+		}
+		else if (p_generator->duration==DURATION_50)
+		{
+			OCR1=(ICR1>>1);
+		}
+		else
+		{
+			OCR1=(ICR1>>12);
+		}
 		p_generator->state=GEN_ON;
 		GENERATOR_ON;
 	}
@@ -269,7 +299,8 @@ PT_THREAD(Switch(struct pt *pt))
 	else 
 	{
 		GENERATOR_OFF;
-		p_generator->regime=GEN_MANUAL;
+		p_generator->regime=GEN_MANUAL; //на всякий пожарный, если режим генератора свалится в что-то неизвестное,
+		//то попадет сюда и выставит ручной режим
 		p_generator->state=GEN_OFF;
 		PT_SPAWN(pt, &Sync_pt, Sync(&Sync_pt));//вызываем дочерний протопоток ручного или синхро запуска
 		//Макс частота нажатия кнопки ~2Гц
@@ -344,7 +375,6 @@ int main(void)
 	p_generator->regime=GEN_MANUAL;
 	p_generator->duration=DURATION_US320;
 	p_generator->period=PERIOD_HZ1;
-	p_generator->prescaler=PRESCALER_256;
 	//Настройка входов-выходов
 	DDRD=0b00011110; //PD6 - button1, PD5 - button0, PD4 - OUT, PD3 - LED1, PD2- LED0, PD1 -TX, PD0 - RX
 	DDRB=0b11111111; //all pins on portb are outputs
