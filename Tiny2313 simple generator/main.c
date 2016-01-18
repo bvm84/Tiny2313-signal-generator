@@ -85,10 +85,10 @@ BUT4 - уменьшение параметра
 /*Макрооредения*/
 //Макроопределения входов-выходов
 
-#define OUT PD3
-#define OUT_PORT PORTD
-#define OUT_PORT_DDR DDRD
-#define OUT_PORT_PIN PIND
+#define OUT PB3
+#define OUT_PORT PORTB
+#define OUT_PORT_DDR DDRB
+#define OUT_PORT_PIN PINB
 #define BUT0 PD6 //левая кнопка
 #define BUT0_PORT PORTD
 #define BUT0_PORT_DDR DDRD
@@ -97,7 +97,7 @@ BUT4 - уменьшение параметра
 #define BUT1_PORT PORTD
 #define BUT1_PORT_DDR DDRD
 #define BUT1_PORT_PIN PIND
-#define LED0 PD2
+#define LED0 PD3
 #define LED0_PORT PORTD
 #define LED0_PORT_DDR DDRD
 #define LED0_PORT_PIN PIND
@@ -150,6 +150,8 @@ BUT4 - уменьшение параметра
 //Макросы выключения, включения генератора
 #define GENERATOR_ON TIMSK |= _BV(OCIE1A)
 #define GENERATOR_OFF TIMSK &= ~_BV(OCIE1A)
+//Макросы работы с таймером
+#define CLEAR_TCCR1B TCCR1B&=~0b11111000;
 //Бит за номером, очистка, установка, проверка, переключение
 #define HI(x) ((x)>>8)
 #define LO(x) ((x)& 0xFF)
@@ -210,7 +212,7 @@ ISR(TIMER0_COMPA_vect)
 //Обработка прерывания по совпадению от таймера1
 ISR(TIMER1_COMPA_vect)
 {
-	
+
 }
 /*?Обработчики прерываний*/
 
@@ -222,7 +224,7 @@ PT_THREAD(Sync(struct pt *pt))
 	PT_BEGIN(pt);
 	//PT_SEM_SIGNAL(pt, &manual_pulse); //устанавливает 1 в manual_pulse, сигнализируя что кнопки больше не опрашивались в другом пропотоке
 	OUT_OFF; //устанавливаем 0 на выходе
-	if ((BUT0_PORT_PIN&(_BV(BUT0)))==0)
+	if (!(BUT0_PORT_PIN&(_BV(BUT0))))//((BUT0_PORT_PIN&(_BV(BUT0)))==0)
 	{
 		LED0_ON;
 		OUT_ON; //устанавливаем 1 на выходе
@@ -240,31 +242,31 @@ PT_THREAD(Buttons(struct pt *pt))
 {
 	static uint32_t but_timer=0;
 	PT_BEGIN(pt);
-	PT_WAIT_UNTIL(pt, (st_millis()-but_timer)>=80);
+	PT_WAIT_UNTIL(pt, (st_millis()-but_timer)>=120);
 	but_timer=st_millis();
-	if ((BUT1_PORT_PIN&(_BV(BUT1)))==0)
+	if (!(BUT1_PORT_PIN&(_BV(BUT1))))//((BUT1_PORT_PIN&(_BV(BUT1)))==0)
 	{
 		if (p_generator->regime==GEN_MANUAL) 
 		{
-			p_generator->regime=GEN_PERIODIC; 
-			p_generator->period=PERIOD_HZ1;
-		} //при долгом нажатии кн0, проиходит смена периода
-		else if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->period=PERIOD_HZ1))
+			p_generator->regime=GEN_PERIODIC;
+			p_generator->period=PERIOD_HZ1; 
+		} 
+		else if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->period==PERIOD_HZ1))
 		{
 			p_generator->period=PERIOD_HZ100;
 		}
-		else if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->period=PERIOD_HZ100))
+		else if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->period==PERIOD_HZ100))
 		{
 			p_generator->period=PERIOD_HZ1000;
 		}
-		else
+		else if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->period==PERIOD_HZ1000))
 		{
 			p_generator->regime=GEN_MANUAL;
 		}
 		p_generator->state=GEN_OFF;
 		GENERATOR_OFF;
 	}
-	if ((BUT0_PORT_PIN&(_BV(BUT0)))==0)
+	if (!(BUT0_PORT_PIN&(_BV(BUT0))))
 	{
 		if (p_generator->duration==DURATION_US320) 
 		{
@@ -293,6 +295,8 @@ PT_THREAD(Switch(struct pt *pt))
 	switch_timer=st_millis();
 	if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->state==GEN_OFF))
 	{
+		TCCR1A=0b10000010;//подключаем таймер к пину
+		CLEAR_TCCR1B;
 		if (p_generator->period==PERIOD_HZ1000)
 		{
 			TCCR1B|=PRESCALER_1_MASK;
@@ -331,7 +335,8 @@ PT_THREAD(Switch(struct pt *pt))
 	else 
 	{
 		GENERATOR_OFF;
-		p_generator->regime=GEN_MANUAL; //на всякий пожарный, если режим генератора свалится в что-то неизвестное,
+		TCCR1A=0b00000010;//Отключаем OC1A от PB3, включаем управление GPIO
+		//p_generator->regime=GEN_MANUAL; //на всякий пожарный, если режим генератора свалится в что-то неизвестное,
 		//то попадет сюда и выставит ручной режим
 		p_generator->state=GEN_OFF;
 		PT_SPAWN(pt, &Sync_pt, Sync(&Sync_pt));//вызываем дочерний протопоток ручного или синхро запуска
@@ -344,7 +349,7 @@ PT_THREAD(Switch(struct pt *pt))
 PT_THREAD(Leds(struct pt *pt))
 {
 	static volatile uint32_t leds_timer=0;
-	static volatile uint8_t counter=0;
+	static volatile uint8_t counter1, counter2=0;
 	PT_BEGIN(pt);
 	PT_WAIT_UNTIL(pt,(st_millis()-leds_timer)>=100);//запуск протопотока каждые 0.1мсек
 	leds_timer=st_millis();
@@ -353,33 +358,44 @@ PT_THREAD(Leds(struct pt *pt))
 		switch(p_generator->period)
 		{
 			case PERIOD_HZ1:
-				if (((LED0_PORT_PIN&(_BV(LED0)))==0)&&(counter>10)) //моргает LED0 раз в секунду
-				{
-					LED0_OFF;
-					counter=0;
-				}
-				else 
+			{
+				if (counter1<10) //моргает LED0 раз в секунду
 				{
 					LED0_ON;
-					counter++;
+					counter1++;
+					counter2=0;
+				}
+				else if (counter2<10)
+				{
+					LED0_OFF;
+					counter2++;
+					if (counter2>=9)
+					{
+						counter1=0;
+					}
 				}
 				LED1_OFF;
 				break;
-			case PERIOD_HZ100:
-				if (((LED0_PORT_PIN&(_BV(LED0)))==0)) //моргает LED0 10 раз в секунду
+			}
+			case PERIOD_HZ100: //моргает LED0 - 10 ращ в секунду
+			{
+				if (((LED0_PORT_PIN&(_BV(LED0)))==0))
 				{
-					LED0_OFF;
+					LED0_ON;
 				}
 				else
 				{
-					LED0_ON;
+					LED0_OFF;
 				}
 				LED1_OFF;
 				break;
-			case PERIOD_HZ1000: //оба светодиоа горят
+			}
+			case PERIOD_HZ1000: //LED0 горит непрерывно
+			{
 				LED0_ON;
-				LED1_ON;
+				LED1_OFF;
 				break;
+			}
 		}
 	}
 	else if (p_generator->regime==GEN_UART) //моргаем обоими светодиодами
@@ -413,9 +429,9 @@ int main(void)
 	p_generator->duration=DURATION_US320;
 	p_generator->period=PERIOD_HZ1;
 	//Настройка входов-выходов
-	DDRD=0b00011110; //PD6 - button1, PD5 - button0, PD4 - LED1, PD3 - OUT, PD2- LED0, PD1 -TX, PD0 - RX
-	DDRB=0b11111111; //all pins on portb are outputs
-	PORTD=0b01100000;//100k pull-up PD6, PD5
+	DDRD=0b00011110; //PD6 - button0, PD5 - button1, PD4 - LED1, PD3 -LED0, PD2- free, PD1 -TX, PD0 - RX
+	DDRB=0b11111111; //PB3- output
+	PORTD=0b01100000;//100k pull-up PD6, PD3
 	PORTB=0;
 	
 	// Настройка системного таймера
@@ -426,10 +442,17 @@ int main(void)
 	//TIMSK |= _BV(OCIE0A);//разрешаем прерывание по совпадению TCNT0 с OCR0A
 	
 	//Начальная настройка таймера генератора, 1Гц, 100мкс
-	TCCR1A=0b01000010;//Toggle OC1A on campare match
+	TCCR1A=0b10000010;//Toggle OC1A on campare match, PB3
 	TCCR1B=0b00011100; //FastPWM with ICR s TOP, prescaler 256 ->32us resolution
 	TCNT1=0;
 	TIMSK |= _BV(OCIE0A);//разрешаем прерывание по совпадению TCNT0 с OCR0A
+
+/*
+	TCCR1B|=PRESCALER_1_MASK;
+	OCR1=(1000/2);
+	ICR1=1000;
+	GENERATOR_ON;
+*/
 	
 	//Настройка UART
 	
@@ -442,7 +465,6 @@ int main(void)
 	//Настройка собаки
 	wdt_reset(); //сбрасываем собаку на всякий пожарный
 	wdt_enable(WDTO_2S); //запускаем собаку с перидом 2с
-	
 	//Разрешаем прерывания, запускаем работу шедулера
 	sei();
 
