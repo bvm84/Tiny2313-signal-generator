@@ -127,10 +127,11 @@ BUT4 - уменьшение параметра
 #define PERIOD_HZ1 0
 #define PERIOD_HZ100 1
 #define PERIOD_HZ1000 2
+#define PRESCALER_NO_MASK 0b00000111
 #define PRESCALER_1_MASK 1
 #define PRESCALER_8_MASK 2
 #define PRESCALER_64_MASK 3
-#define PRESCALER_256_MASK 8
+#define PRESCALER_256_MASK 4
 
 
 //Макроопредления вспомогательные
@@ -151,7 +152,9 @@ BUT4 - уменьшение параметра
 #define GENERATOR_ON TIMSK |= _BV(OCIE1A)
 #define GENERATOR_OFF TIMSK &= ~_BV(OCIE1A)
 //Макросы работы с таймером
-#define CLEAR_TCCR1B TCCR1B&=~0b11111000;
+#define CLEAR_TCCR1B TCCR1B &= (~PRESCALER_NO_MASK)
+#define CONNECT_TIMER_TO_PIN TCCR1A |= _BV(COM1A1)
+#define DISCONETC_TIMER_FROM_PIN TCCR1A &= ~_BV(COM1A1)
 //Бит за номером, очистка, установка, проверка, переключение
 #define HI(x) ((x)>>8)
 #define LO(x) ((x)& 0xFF)
@@ -175,9 +178,10 @@ static struct pt Buttons_pt;
 static struct pt Switch_pt;
 static struct pt Leds_pt;
 static struct pt Sync_pt;
-//static struct pt_sem manual_pulse; //указатель на структуру семафора
+static struct pt Manual_pt;
+static struct pt_sem regime_sem; 
 //Статическая переменная системного таймера, хранит текущее время
-volatile static uint32_t st_timer0_millis;
+volatile static uint32_t st_timer0_millis=0;
 /*?Объявление глобальных переменных*/
 
 
@@ -218,11 +222,11 @@ ISR(TIMER1_COMPA_vect)
 
 /* Протопотоки */
 
-//Дочерний протопоток, который отрабатывает ручной запуск
-PT_THREAD(Sync(struct pt *pt))
+//Протопоток1 ручного режима, запускается когда выбран ручной режим
+PT_THREAD(Manual(struct pt *pt))
 {
 	PT_BEGIN(pt);
-	//PT_SEM_SIGNAL(pt, &manual_pulse); //устанавливает 1 в manual_pulse, сигнализируя что кнопки больше не опрашивались в другом пропотоке
+	PT_SEM_WAIT(pt, &regime_sem);
 	OUT_OFF; //устанавливаем 0 на выходе
 	if (!(BUT0_PORT_PIN&(_BV(BUT0))))//((BUT0_PORT_PIN&(_BV(BUT0)))==0)
 	{
@@ -233,10 +237,8 @@ PT_THREAD(Sync(struct pt *pt))
 		_delay_ms(500); //задержка перед следующим срабатыванием
 		LED0_OFF;
 	}
-	PT_EXIT(pt);
 	PT_END(pt);
 }
-
 //Протопоток 1 - обработка нажатия кнопок, настройка режима генератора
 PT_THREAD(Buttons(struct pt *pt))
 {
@@ -288,62 +290,72 @@ PT_THREAD(Buttons(struct pt *pt))
 //Протопоток2 - настрока таймера1 и индикация режима работы генератора
 PT_THREAD(Switch(struct pt *pt))
 {
-	uint32_t dur=0;
+	//uint32_t dur=0;
 	static volatile uint32_t switch_timer=0;
 	PT_BEGIN(pt);
 	PT_WAIT_UNTIL(pt,(st_millis()-switch_timer)>=10);//запуск протопотока каждые 10мсек
 	switch_timer=st_millis();
 	if ((p_generator->regime==GEN_PERIODIC)&&(p_generator->state==GEN_OFF))
 	{
-		TCCR1A=0b10000010;//подключаем таймер к пину
 		CLEAR_TCCR1B;
 		if (p_generator->period==PERIOD_HZ1000)
 		{
 			TCCR1B|=PRESCALER_1_MASK;
-			ICR1=PERIOD_HZ1000;
+			ICR1=PERIOD_HZ1000_TICKS;
 		}
 		else if (p_generator->period==PERIOD_HZ100)
 		{
 			TCCR1B|=PRESCALER_8_MASK;
-			ICR1=PERIOD_HZ100;
+			ICR1=PERIOD_HZ100_TICKS;
 		}
 		else 
 		{
 			TCCR1B|=PRESCALER_256_MASK;
-			ICR1=PERIOD_HZ1;
+			ICR1=PERIOD_HZ1_TICKS;
 		}
 		if (p_generator->duration==DURATION_90)
 		{
-			dur=((7*ICR1)>>3);
-			OCR1=(uint16_t)dur;
+			OCR1=(uint16_t)((7*(uint32_t)ICR1)>>3);
 		}
 		else if (p_generator->duration==DURATION_50)
 		{
-			OCR1=(ICR1>>1);
+			OCR1=(uint16_t)((uint32_t)ICR1>>1);
 		}
 		else
 		{
-			OCR1=(ICR1>>12);
+			if (p_generator->period==PERIOD_HZ1000)
+			{
+				OCR1=(uint16_t)(5*(uint32_t)ICR1>>4);
+			}
+			else if (p_generator->period==PERIOD_HZ100)
+			{
+				OCR1=(uint16_t)((uint32_t)ICR1>>5);
+			}
+			else
+			{
+				OCR1=(uint16_t)(5*(uint32_t)ICR1>>14);
+			}
 		}
 		p_generator->state=GEN_ON;
+		CONNECT_TIMER_TO_PIN;//подключаем таймер к пину
 		GENERATOR_ON;
 	}
 	else if (p_generator->regime==GEN_UART)
 	{
 		//тут что-то будет :) можно прямо здесь написать работу от уарта, а можно в отдельно протопотоке
 	}
-	else 
+	/*else 
 	{
 		GENERATOR_OFF;
-		TCCR1A=0b00000010;//Отключаем OC1A от PB3, включаем управление GPIO
+		DISCONETC_TIMER_FROM_PIN;//Отключаем OC1A от PB3, включаем управление GPIO
 		//p_generator->regime=GEN_MANUAL; //на всякий пожарный, если режим генератора свалится в что-то неизвестное,
 		//то попадет сюда и выставит ручной режим
-		p_generator->state=GEN_OFF;
+		p_generator->state=GEN_ON;
 		PT_SPAWN(pt, &Sync_pt, Sync(&Sync_pt));//вызываем дочерний протопоток ручного или синхро запуска
 		//Макс частота нажатия кнопки ~2Гц
 		LED0_OFF;
 		LED1_OFF;
-	}
+	}*/
 	PT_END(pt);
 }
 PT_THREAD(Leds(struct pt *pt))
@@ -423,6 +435,8 @@ PT_THREAD(Leds(struct pt *pt))
 
 int main(void)
 {
+	//volatile uint16_t test=0;
+	//volatile uint32_t test2=0;
 	//Инициализация струтуры генератора
 	p_generator->state=GEN_OFF;
 	p_generator->regime=GEN_MANUAL;
@@ -445,14 +459,14 @@ int main(void)
 	TCCR1A=0b10000010;//Toggle OC1A on campare match, PB3
 	TCCR1B=0b00011100; //FastPWM with ICR s TOP, prescaler 256 ->32us resolution
 	TCNT1=0;
-	TIMSK |= _BV(OCIE0A);//разрешаем прерывание по совпадению TCNT0 с OCR0A
-
-/*
-	TCCR1B|=PRESCALER_1_MASK;
-	OCR1=(1000/2);
+	/*CONNECT_TIMER_TO_PIN;
+	CLEAR_TCCR1B;
+	TCCR1B|=PRESCALER_256_MASK;
+	OCR1=100;
 	ICR1=1000;
-	GENERATOR_ON;
-*/
+	GENERATOR_ON;*/
+	
+	TIMSK |= _BV(OCIE0A);//разрешаем прерывание по совпадению TCNT0 с OCR0A
 	
 	//Настройка UART
 	
@@ -461,11 +475,15 @@ int main(void)
 	PT_INIT(&Switch_pt);
 	PT_INIT(&Leds_pt);
 	PT_INIT(&Sync_pt);
+	PT_INIT(&Manual_pt);
+	PT_SEM_INIT(&regime_sem, GEN_MANUAL);
 	
 	//Настройка собаки
 	wdt_reset(); //сбрасываем собаку на всякий пожарный
 	wdt_enable(WDTO_2S); //запускаем собаку с перидом 2с
 	//Разрешаем прерывания, запускаем работу шедулера
+	//test2=((7*(uint32_t)31250));
+	//test=(uint16_t)test2;
 	sei();
 
     while(1)
@@ -474,6 +492,7 @@ int main(void)
 		PT_SCHEDULE(Buttons(&Buttons_pt));
 		PT_SCHEDULE(Switch(&Switch_pt));
 		PT_SCHEDULE(Leds(&Leds_pt));
+		PT_SCHEDULE(Manual(&Manual_pt));
 		wdt_reset(); //переодически сбрасываем собаку чтобы не улетететь в ресет
 	 }
 }
