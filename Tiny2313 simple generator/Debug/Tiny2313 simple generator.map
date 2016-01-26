@@ -1,7 +1,5 @@
 Archive member included to satisfy reference by file (symbol)
 
-d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
-                              main.o (__mulhi3)
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
                               D:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.0.71/gcc/dev/attiny2313/avr25/tiny-stack/crtattiny2313.o (exit)
 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_clear_bss.o)
@@ -14,20 +12,11 @@ Discarded input sections
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
- .text          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
- .data          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
- .bss           0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
- .text.libgcc.div
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
- .text.libgcc   0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
- .text.libgcc.prologue
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
- .text.libgcc.builtins
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
- .text.libgcc.fmul
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
- .text.libgcc.fixed
-                0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
+ .text.st_millis
+                0x00000000       0x18 main.o
+ .text.Buttons  0x00000000      0x146 main.o
+ .text.Switch   0x00000000      0x24a main.o
+ .text.Leds     0x00000000      0x112 main.o
  .text          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
  .data          0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
  .bss           0x00000000        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
@@ -177,7 +166,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x476
+.text           0x00000000      0x5f6
  *(.vectors)
  .vectors       0x00000000       0x26 D:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATtiny_DFP/1.0.71/gcc/dev/attiny2313/avr25/tiny-stack/crtattiny2313.o
                 0x00000000                __vector_default
@@ -251,34 +240,20 @@ END GROUP
                 0x00000042                __vector_18
                 0x00000044                . = ALIGN (0x2)
  *(.text.*)
- .text.st_millis
-                0x00000044       0x18 main.o
-                0x00000044                st_millis
  .text.__vector_13
-                0x0000005c       0x4a main.o
-                0x0000005c                __vector_13
+                0x00000044       0x4a main.o
+                0x00000044                __vector_13
  .text.__vector_4
-                0x000000a6       0x14 main.o
-                0x000000a6                __vector_4
- .text.Sync     0x000000ba       0x42 main.o
-                0x000000ba                Sync
- .text.Buttons  0x000000fc       0xce main.o
-                0x000000fc                Buttons
- .text.Switch   0x000001ca      0x13a main.o
-                0x000001ca                Switch
- .text.Leds     0x00000304       0xc4 main.o
-                0x00000304                Leds
+                0x0000008e       0x24 main.o
+                0x0000008e                __vector_4
  .text.startup.main
-                0x000003c8       0x88 main.o
-                0x000003c8                main
- .text.libgcc.mul
-                0x00000450       0x22 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_mulhi3.o)
-                0x00000450                __mulhi3
-                0x00000472                . = ALIGN (0x2)
+                0x000000b2      0x540 main.o
+                0x000000b2                main
+                0x000005f2                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000472        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
-                0x00000472                _exit
-                0x00000472                exit
+ .fini9         0x000005f2        0x0 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
+                0x000005f2                _exit
+                0x000005f2                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -297,11 +272,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000472        0x4 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
+ .fini0         0x000005f2        0x4 d:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr25/tiny-stack\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000476                _etext = .
+                0x000005f6                _etext = .
 
-.data           0x00800060        0x0 load address 0x00000476
+.data           0x00800060        0x0 load address 0x000005f6
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -316,17 +291,20 @@ END GROUP
                 0x00800060                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.counter.1696
+ .bss.counter2.1690
                 0x00800060        0x1 main.o
- .bss.leds_timer.1695
-                0x00800061        0x4 main.o
- .bss.switch_timer.1687
-                0x00800065        0x4 main.o
- .bss.but_timer.1679
-                0x00800069        0x4 main.o
+ .bss.counter1.1689
+                0x00800061        0x1 main.o
+ .bss.leds_timer.1688
+                0x00800062        0x4 main.o
+ .bss.switch_timer.1681
+                0x00800066        0x4 main.o
+ .bss.delay.1674
+                0x0080006a        0x1 main.o
+ .bss.but_timer.1673
+                0x0080006b        0x4 main.o
  .bss.st_timer0_millis
-                0x0080006d        0x4 main.o
- .bss.Sync_pt   0x00800071        0x2 main.o
+                0x0080006f        0x4 main.o
  .bss.Leds_pt   0x00800073        0x2 main.o
  .bss.Switch_pt
                 0x00800075        0x2 main.o
@@ -336,8 +314,8 @@ END GROUP
                 0x00800079        0x4 main.o
  *(COMMON)
                 0x0080007d                PROVIDE (__bss_end, .)
-                0x00000476                __data_load_start = LOADADDR (.data)
-                0x00000476                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000005f6                __data_load_start = LOADADDR (.data)
+                0x000005f6                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x0080007d        0x0
                 0x0080007d                PROVIDE (__noinit_start, .)
@@ -408,37 +386,37 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0x58
+.debug_aranges  0x00000000       0x50
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x58 main.o
+                0x00000000       0x50 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x15b
+.debug_info     0x00000000      0x3b7
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000      0x15b main.o
+ .debug_info    0x00000000      0x3b7 main.o
 
-.debug_abbrev   0x00000000       0xdf
+.debug_abbrev   0x00000000      0x11c
  *(.debug_abbrev)
- .debug_abbrev  0x00000000       0xdf main.o
+ .debug_abbrev  0x00000000      0x11c main.o
 
-.debug_line     0x00000000      0x278
+.debug_line     0x00000000      0x510
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x278 main.o
+ .debug_line    0x00000000      0x510 main.o
 
-.debug_frame    0x00000000       0xfc
+.debug_frame    0x00000000       0xe8
  *(.debug_frame)
- .debug_frame   0x00000000       0xfc main.o
+ .debug_frame   0x00000000       0xe8 main.o
 
-.debug_str      0x00000000      0x16f
+.debug_str      0x00000000      0x156
  *(.debug_str)
- .debug_str     0x00000000      0x16f main.o
+ .debug_str     0x00000000      0x156 main.o
 
-.debug_loc      0x00000000       0x69
+.debug_loc      0x00000000       0x7d
  *(.debug_loc)
- .debug_loc     0x00000000       0x69 main.o
+ .debug_loc     0x00000000       0x7d main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -458,9 +436,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x48
+.debug_ranges   0x00000000       0xf8
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x48 main.o
+ .debug_ranges  0x00000000       0xf8 main.o
 
 .debug_macro
  *(.debug_macro)
