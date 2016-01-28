@@ -106,6 +106,7 @@
     <ListValues>
       <Value>%24(PackRepoDir)\atmel\ATtiny_DFP\1.0.71\include</Value>
       <Value>../pt-1.4</Value>
+      <Value>..</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize most (-O3)</avrgcc.compiler.optimization.level>
@@ -126,12 +127,18 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Tiny2313_gen.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="usart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="usart.h">
+      <SubType>compile</SubType>
+    </Compile>
     <None Include="Old_code.c">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="pid.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="pt.h">
       <SubType>compile</SubType>
     </Compile>
